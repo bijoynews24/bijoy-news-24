@@ -1,6 +1,1380 @@
 <!DOCTYPE html>
-<html lang="bn"><head><meta charset="UTF-8"><title>BIJOY NEWS 24</title></head>
-<body style="font-family:sans-serif;padding:40px;text-align:center;color:#555">
-<h1>প্রথমবার GitHub Actions চালানোর পর এখানে খবর দেখা যাবে</h1>
-<p>Actions ট্যাব থেকে "Run workflow" চাপো — কয়েক মিনিটেই এই পেজ আসল খবর দিয়ে ভরে যাবে।</p>
-</body></html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIJOY NEWS 24 — সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ</title>
+<meta name="description" content="সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --ink: #111014;
+    --ink-soft: #5C5860;
+    --black: #0C0B0E;
+    --red: #E4102B;
+    --red-deep: #B80C22;
+    --silver: #D7DADF;
+    --card-bg: #FFFFFF;
+    --hairline: #E8E6E9;
+    --glow: rgba(228, 16, 43, 0.25);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Hind Siliguri', sans-serif;
+    line-height: 1.6;
+  }
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3 { font-family: 'Noto Serif Bengali', serif; margin: 0; }
+
+  /* ---------- মাস্টহেড: কালো + উজ্জ্বল লাল + সোনালি — এলিট এডিটোরিয়াল লুক ---------- */
+  .masthead {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--red);
+  }
+  .masthead::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 0%, rgba(228,16,43,0.18) 45%, transparent 70%);
+    background-size: 220% 100%;
+    animation: sheen-sweep 7s ease-in-out infinite;
+  }
+  @keyframes sheen-sweep {
+    0% { background-position: 200% 0; }
+    100% { background-position: -20% 0; }
+  }
+  .masthead::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(520px 200px at 85% 0%, rgba(255,255,255,0.06), transparent 70%);
+  }
+  .masthead-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 26px 20px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: relative;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand .accent-bar {
+    width: 6px;
+    align-self: stretch;
+    background: linear-gradient(var(--red), var(--red-deep));
+    border-radius: 2px;
+  }
+  .masthead .brand h1 {
+    font-family: 'Anton', 'Arial Black', 'Impact', 'Hind Siliguri', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    color: #FFFFFF;
+    text-shadow: 0 0 22px rgba(228,16,43,0.4), 0 2px 2px rgba(0,0,0,0.5);
+    line-height: 1;
+  }
+  .masthead .brand p {
+    margin: 6px 0 0;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .masthead .updated {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.55);
+    text-align: right;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .masthead::before { animation: none; }
+  }
+
+  /* ---------- ব্রেকিং টিকার ---------- */
+  .ticker-bar {
+    background: var(--red);
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  .ticker-bar .ticker-label {
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    background: var(--black);
+    color: #FFFFFF;
+    padding: 8px 18px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+    box-shadow: -14px 0 18px -6px rgba(0,0,0,0.35);
+  }
+  .ticker-label .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red);
+    animation: pulse-dot 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.7); }
+  }
+  .ticker-track {
+    display: inline-block;
+    padding: 9px 0;
+    padding-right: 150px;
+    animation: scroll-ticker 55s linear infinite;
+  }
+  .ticker-track a {
+    margin-right: 42px;
+    font-size: 0.9rem;
+    color: #FFFFFF;
+  }
+  .ticker-track a:hover { color: var(--black); }
+  @keyframes scroll-ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track { animation: none; overflow-x: auto; }
+    .ticker-label .dot { animation: none; }
+  }
+
+  /* ---------- ক্যাটাগরি নেভ ---------- */
+  .category-nav {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+  .category-nav a {
+    white-space: nowrap;
+    color: var(--ink);
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .category-nav a::after {
+    content: "";
+    position: absolute; left: 0; right: 100%; bottom: 0;
+    height: 2px; background: var(--red);
+    transition: right 0.25s ease;
+  }
+  .category-nav a:hover { color: var(--red); }
+  .category-nav a:hover::after { right: 0; }
+
+  main { max-width: 1160px; margin: 0 auto; padding: 30px 20px 60px; }
+
+  /* ---------- হিরো গ্রিড ---------- */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+    margin-bottom: 50px;
+  }
+  .hero-lead { grid-row: span 2; }
+  @media (max-width: 800px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-lead { grid-row: auto; }
+  }
+
+  .hero-card, .card {
+    background: var(--card-bg);
+    border: 1px solid var(--hairline);
+    border-top: 3px solid transparent;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+  .hero-card:hover, .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 36px -18px var(--glow), 0 4px 10px -6px rgba(0,0,0,0.08);
+    border-top-color: var(--red);
+  }
+  .hero-card .card-img img, .card .card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s ease;
+  }
+  .hero-card:hover .card-img img, .card:hover .card-img img { transform: scale(1.04); }
+  .hero-lead .card-img { aspect-ratio: 16/10; position: relative; overflow: hidden; }
+  .hero-lead .card-img::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(12,11,14,0.6), transparent 55%);
+  }
+  .hero-secondary { display: flex; }
+  .hero-secondary .card-img { width: 40%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }
+  .hero-secondary .hero-body { flex: 1; }
+  .card-img.placeholder {
+    background: linear-gradient(135deg, var(--red), var(--black));
+    aspect-ratio: 16/10;
+  }
+
+  .card-cat {
+    display: inline-block;
+    background: var(--red);
+    color: #FFFFFF;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+    letter-spacing: 0.4px;
+  }
+  .hero-body, .card-body { padding: 18px 20px 20px; }
+  .hero-lead .hero-title { font-size: clamp(1.5rem, 3vw, 2.15rem); line-height: 1.32; }
+  .hero-secondary .hero-title { font-size: 1.05rem; }
+  .hero-title a:hover, .card-title a:hover { color: var(--red); }
+  .hero-summary { color: var(--ink-soft); margin: 10px 0 0; font-size: 0.95rem; }
+  .hero-secondary .hero-summary { display: none; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 22px;
+  }
+  .card-title { font-size: 1.05rem; line-height: 1.4; margin-top: 2px; }
+  .card-summary { color: var(--ink-soft); font-size: 0.88rem; margin: 8px 0 0; }
+  .card-img { aspect-ratio: 16/10; overflow: hidden; }
+
+  .card-meta {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--hairline);
+    padding-top: 10px;
+  }
+  .card-readmore { color: var(--red); font-weight: 700; }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 50px 0 22px;
+  }
+  .section-heading h2 {
+    font-size: 1.55rem;
+    color: var(--ink);
+    white-space: nowrap;
+    position: relative;
+    padding-left: 16px;
+  }
+  .section-heading h2::before {
+    content: "";
+    position: absolute; left: 0; top: 6px; bottom: 6px; width: 5px;
+    background: linear-gradient(var(--red), var(--red-deep));
+  }
+  .section-rule { flex: 1; height: 1px; background: var(--hairline); }
+  .category-section:first-of-type .section-heading { margin-top: 0; }
+
+  footer {
+    background: var(--black);
+    color: rgba(255,255,255,0.7);
+    padding: 26px 20px 44px;
+    font-size: 0.85rem;
+    border-top: 3px solid var(--red);
+  }
+  footer .footer-inner { max-width: 1160px; margin: 0 auto; }
+  footer strong { color: #FFFFFF; }
+
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <span class="accent-bar" aria-hidden="true"></span>
+        <div>
+          <h1>BIJOY NEWS 24</h1>
+          <p>সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ</p>
+        </div>
+      </div>
+      <div class="updated">সর্বশেষ হালনাগাদ: 13 September 2026, 12:44 AM</div>
+    </div>
+  </header>
+
+  <div class="ticker-bar">
+    <div class="ticker-track"><a href="https://www.risingbd.com/bangladesh/news/662774" target="_blank" rel="noopener">লক্ষ্যমাত্রা পূরণে কাগজে জন্ম, কাগজেই মৃত্যু</a><a href="https://www.risingbd.com/international/news/662773" target="_blank" rel="noopener">বাব আল-মান্দেব পুরোপুরি বন্ধের হুমকি হুথিদের</a><a href="https://www.risingbd.com/bangladesh/news/662772" target="_blank" rel="noopener">লং মার্চ: টাঙ্গাইলে ১১ দলীয় ঐক্য জোটের সংবাদ সম্মেলন</a><a href="https://www.risingbd.com/international/news/662771" target="_blank" rel="noopener">ভারত থেকে বাংলাদেশে আসছে ইলিশ</a><a href="https://www.risingbd.com/economics/news/662770" target="_blank" rel="noopener">আরো ৫ বিলিয়ন ডলার মার্কিন বিনিয়োগ চায় বাংলাদেশ</a><a href="https://www.risingbd.com/positive-bangladesh/news/662769" target="_blank" rel="noopener">শুক্রবার এলেই বদলে যায় জয়দেবপুর স্টেশন, মাদুরে বসে স্বপ্ন বোনে শত পথশিশু</a><a href="https://www.risingbd.com/bangladesh/news/662768" target="_blank" rel="noopener">পদ্মায় নৌকাডুবি, ১০ বাংলাদেশিকে উদ্ধার করল বিএসএফ</a><a href="https://www.risingbd.com/economics/news/662767" target="_blank" rel="noopener">ইভি গাড়ি আমদানির সুযোগ চায় বারভিডা</a><a href="https://www.risingbd.com/politics/news/662766" target="_blank" rel="noopener">নিষিদ্ধ দল উঁকি মারার চেষ্টা করছে, গোয়েন্দা সংস্থাগুলো কী করছে: রিজভী</a><a href="https://www.risingbd.com/sports/news/662765" target="_blank" rel="noopener">রিশাদ-আলিসের ঘূর্ণিতে দ. আফ্রিকার বিপক্ষে বাংলাদেশের দাপুটে জয়</a><a href="https://www.risingbd.com/bangladesh/news/662774" target="_blank" rel="noopener">লক্ষ্যমাত্রা পূরণে কাগজে জন্ম, কাগজেই মৃত্যু</a><a href="https://www.risingbd.com/international/news/662773" target="_blank" rel="noopener">বাব আল-মান্দেব পুরোপুরি বন্ধের হুমকি হুথিদের</a><a href="https://www.risingbd.com/bangladesh/news/662772" target="_blank" rel="noopener">লং মার্চ: টাঙ্গাইলে ১১ দলীয় ঐক্য জোটের সংবাদ সম্মেলন</a><a href="https://www.risingbd.com/international/news/662771" target="_blank" rel="noopener">ভারত থেকে বাংলাদেশে আসছে ইলিশ</a><a href="https://www.risingbd.com/economics/news/662770" target="_blank" rel="noopener">আরো ৫ বিলিয়ন ডলার মার্কিন বিনিয়োগ চায় বাংলাদেশ</a><a href="https://www.risingbd.com/positive-bangladesh/news/662769" target="_blank" rel="noopener">শুক্রবার এলেই বদলে যায় জয়দেবপুর স্টেশন, মাদুরে বসে স্বপ্ন বোনে শত পথশিশু</a><a href="https://www.risingbd.com/bangladesh/news/662768" target="_blank" rel="noopener">পদ্মায় নৌকাডুবি, ১০ বাংলাদেশিকে উদ্ধার করল বিএসএফ</a><a href="https://www.risingbd.com/economics/news/662767" target="_blank" rel="noopener">ইভি গাড়ি আমদানির সুযোগ চায় বারভিডা</a><a href="https://www.risingbd.com/politics/news/662766" target="_blank" rel="noopener">নিষিদ্ধ দল উঁকি মারার চেষ্টা করছে, গোয়েন্দা সংস্থাগুলো কী করছে: রিজভী</a><a href="https://www.risingbd.com/sports/news/662765" target="_blank" rel="noopener">রিশাদ-আলিসের ঘূর্ণিতে দ. আফ্রিকার বিপক্ষে বাংলাদেশের দাপুটে জয়</a></div>
+    <span class="ticker-label"><span class="dot"></span> ব্রেকিং</span>
+  </div>
+
+  <nav class="category-nav"><a href="#cat-0">আন্তর্জাতিক</a><a href="#cat-1">অর্থনীতি</a><a href="#cat-2">সর্বশেষ</a><a href="#cat-3">বাংলাদেশ</a><a href="#cat-4">রাজনীতি</a><a href="#cat-5">খেলাধুলা</a><a href="#cat-6">বিনোদন</a><a href="#cat-7">জাতীয়</a><a href="#cat-8">শিক্ষা</a><a href="#cat-9">অপরাধ</a><a href="#cat-10">ক্যাম্পাস</a><a href="#cat-11">স্বাস্থ্য</a></nav>
+
+  <main>
+    <div class="hero-grid">
+<article class="hero-card hero-lead">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/bachher-2609121654.jpg" alt="লক্ষ্যমাত্রা পূরণে কাগজে জন্ম, কাগজেই মৃত্যু" loading="lazy"></div>
+  <div class="hero-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h2 class="hero-title"><a href="https://www.risingbd.com/bangladesh/news/662774" target="_blank" rel="noopener">লক্ষ্যমাত্রা পূরণে কাগজে জন্ম, কাগজেই মৃত্যু</a></h2>
+    <p class="hero-summary">লক্ষ্যমাত্রা পূরণ দেখাতে কাগজে-কলমে অস্তিত্বহীন ৭৪ শিশুর জন্ম ও মৃত্যু নিবন্ধন করেছেন লক্ষ্মীপুর সদর উপজেলার চর রমনীমোহন ইউনিয়ন পরিষদের সাবেক প্রশাসনিক কর্মকর্তা (নিবন্ধন সহকারী) আবুল বাছের। জন্ম নিবন্ধনের কয়েক দিন বা মা</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662774" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="hero-card hero-secondary">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/4-2609121647.jpg" alt="বাব আল-মান্দেব পুরোপুরি বন্ধের হুমকি হুথিদের" loading="lazy"></div>
+  <div class="hero-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h2 class="hero-title"><a href="https://www.risingbd.com/international/news/662773" target="_blank" rel="noopener">বাব আল-মান্দেব পুরোপুরি বন্ধের হুমকি হুথিদের</a></h2>
+    <p class="hero-summary">ইয়েমেনের হুথিরা যেকোনো ধরনের সামরিক হস্তক্ষেপের বিরুদ্ধে কঠোর হুঁশিয়ার দিয়েছে। সামরিক অভিযান চালানো হলে লোহিত সাগরের বাব আল-মান্দেব প্রণালি তারা পুরোপুরি বন্ধ করে দেওয়ার হুমকি দিয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662773" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="hero-card hero-secondary">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/tangile-press-12925026-2609121638.jpg" alt="লং মার্চ: টাঙ্গাইলে ১১ দলীয় ঐক্য জোটের সংবাদ সম্মেলন" loading="lazy"></div>
+  <div class="hero-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h2 class="hero-title"><a href="https://www.risingbd.com/bangladesh/news/662772" target="_blank" rel="noopener">লং মার্চ: টাঙ্গাইলে ১১ দলীয় ঐক্য জোটের সংবাদ সম্মেলন</a></h2>
+    <p class="hero-summary">আগামী ১৯ সেপ্টেম্বর অনুষ্ঠিতব্য ঢাকা থেকে রংপুর অভিমুখী দ্বিতীয় লং মার্চ সফল করার লক্ষ্যে টাঙ্গাইলে সংবাদ সম্মেলন অনুষ্ঠিত হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662772" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+    
+        <section class="category-section" id="cat-0">
+          <div class="section-heading">
+            <h2>আন্তর্জাতিক</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/2957-2609121632.jpg" alt="ভারত থেকে বাংলাদেশে আসছে ইলিশ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662771" target="_blank" rel="noopener">ভারত থেকে বাংলাদেশে আসছে ইলিশ</a></h3>
+    <p class="card-summary">একেই বলে বোধহয় উল্টো পুরাণ। প্রতি বছর বাংলাদেশ থেকে ভারতে পৌঁছায় পদ্মার রুপালি ইলিশ। এটাই দস্তুর ছিল এতদিন। কিন্তু চলতি বছর এখনো পর্যন্ত বাংলাদেশে ইলিশ উৎপাদন কম। তাই ঘাটতি মেটাতে ভারত থেকে এই প্রথম ইলিশ আমদানি করছে বা</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662771" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/638-2609121458.jpg" alt="ট্রাম্পকে নতুন সঙ্কটে ফেলেছে হুথিরা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662759" target="_blank" rel="noopener">ট্রাম্পকে নতুন সঙ্কটে ফেলেছে হুথিরা</a></h3>
+    <p class="card-summary">ইরান সমর্থিত হুথিদের ঝটিকা অভিযানের ফলে মধ্যপ্রাচ্যের একটি অত্যন্ত গুরুত্বপূর্ণ জলপথ নিয়ন্ত্রণের সুযোগ তৈরি হয়েছে এই সশস্ত্র গোষ্ঠীর সামনে। ইরানের সাথে মার্কিন প্রেসিডেন্ট ডোনাল্ড ট্রাম্পের সংঘাত যখন সপ্তম মাসে গড়িয়েছে, </p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662759" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/355-2609121235.jpg" alt="যুদ্ধ ও শুল্কের নিন্দা জানানো হলো ব্রিকসের যৌথ ঘোষণায়" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662740" target="_blank" rel="noopener">যুদ্ধ ও শুল্কের নিন্দা জানানো হলো ব্রিকসের যৌথ ঘোষণায়</a></h3>
+    <p class="card-summary">ব্রিকস সম্মেলনের যৌথ ঘোষণায় জাতিসংঘ নিরাপত্তা পরিষদের (ইউএনএসসি) ‘কাঠামোগত সংস্কার’সহ বিভিন্ন বহুপাক্ষিক প্রতিষ্ঠানের সংস্কারের আহ্বান জানানো হয়েছে এবং সন্ত্রাসবাদের তীব্র নিন্দা করা হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662740" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/683-2609121154.jpg" alt="যুক্তরাষ্ট্রের মধ্যবর্তী নির্বাচনের পর ইরান যুদ্ধের অবসান ঘটবে: ট্রাম্প" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662733" target="_blank" rel="noopener">যুক্তরাষ্ট্রের মধ্যবর্তী নির্বাচনের পর ইরান যুদ্ধের অবসান ঘটবে: ট্রাম্প</a></h3>
+    <p class="card-summary">মার্কিন প্রেসিডেন্ট ডোনাল্ড ট্রাম্প জানিয়েছেন, নভেম্বরে অনুষ্ঠিতব্য যুক্তরাষ্ট্রের মধ্যবর্তী নির্বাচনের পরই ইরানের সাথে চলমান পরিস্থিতির অবসান ঘটবে এবং তখন তেলের দাম দ্রুত কমে যাবে। শনিবার রয়টার্স এ তথ্য জানিয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662733" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/904-2609121031.jpg" alt="তেলের পাইপলাইন বন্ধ করে দিয়েছে সৌদি আরব" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662721" target="_blank" rel="noopener">তেলের পাইপলাইন বন্ধ করে দিয়েছে সৌদি আরব</a></h3>
+    <p class="card-summary">মধ্যপ্রাচ্যে চলমান সংঘাতের বিস্তারের মধ্যে গুরুত্বপূর্ণ তেল পরিবহনকারী ‘পূর্ব-পশ্চিম পাইপলাইন’-এর ওপর বিমান হামলার জেরে সৌদি আরব এটি বন্ধ করে দিয়েছে। এই ঘটনার ফলে জ্বালানির দাম আরো বেড়ে যাওয়ার আশঙ্কা তৈরি হয়েছে। শনিবার র</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662721" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/611-2609121018.jpg" alt="যৌথ ঘোষণাপত্রে সম্মত ব্রিকস" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/international/news/662717" target="_blank" rel="noopener">যৌথ ঘোষণাপত্রে সম্মত ব্রিকস</a></h3>
+    <p class="card-summary">উদীয়মান অর্থনীতির দেশগুলোর জোট `ব্রিকস` একটি যৌথ ঘোষণাপত্রে সম্মত হয়েছে। শনিবার রয়টার্সকে সংশ্লিষ্ট সূত্র এ তথ্য জানিয়েছে। জোটটির বৈশ্বিক প্রভাব বৃদ্ধির লক্ষ্যে নয়াদিল্লিতে নেতাদের শীর্ষ সম্মেলন শুরুর কয়েক ঘণ্টা আগেই এই</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/international/news/662717" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/modi-and-xi-mtyjdp0zusrmkwo-20260912214704.jpg" alt="মোদী-শি জিনপিং বৈঠক: সীমান্ত, বাণিজ্য ও বিনিয়োগে গুরুত্ব" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/international/news/1156525" target="_blank" rel="noopener">মোদী-শি জিনপিং বৈঠক: সীমান্ত, বাণিজ্য ও বিনিয়োগে গুরুত্ব</a></h3>
+    <p class="card-summary">ভারত ও চীনের সম্পর্ক আরও এগিয়ে নিতে সীমান্ত এলাকায় শান্তি ও স্থিতিশীলতা বজায় রাখা জরুরি বলে জানিয়েছেন ভারতের প্রধানমন্ত্রী নরেন্দ্র মোদী। দিল্লিতে ব্রিকস সম্মেলনের ফাঁকে চীনের প্রেসিডেন্ট শি জিনপিংয়ের সঙ্গে দ্বিপক্ষীয় বৈ</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/international/news/1156525" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/houthi-supporters-machine-guns-anti-us-israel-ra-mtyinssbrltbd8o-20260912210534.jpg" alt="ইয়েমেনে অস্ত্র তৈরিতে এআই ব্যবহারের চেষ্টা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">আন্তর্জাতিক</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/international/news/1156516" target="_blank" rel="noopener">ইয়েমেনে অস্ত্র তৈরিতে এআই ব্যবহারের চেষ্টা</a></h3>
+    <p class="card-summary">ইয়েমেনে গাইডেড রকেট ও ক্ষেপণাস্ত্র তৈরিতে এআই বট ব্যবহারের চেষ্টা করেছেন বিদ্রোহীরা। মার্কিন এআই প্রতিষ্ঠান অ্যানথ্রপিকের তৈরি এআই বট ব্যবহার করে এসব অস্ত্র তৈরির জন্য প্রয়োজনীয় কোড তৈরির চেষ্টা করা হয়েছিল বলে এক প্রতিবে</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/international/news/1156516" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-1">
+          <div class="section-heading">
+            <h2>অর্থনীতি</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Barvida-2609121625.jpg" alt="আরো ৫ বিলিয়ন ডলার মার্কিন বিনিয়োগ চায় বাংলাদেশ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">অর্থনীতি</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/economics/news/662770" target="_blank" rel="noopener">আরো ৫ বিলিয়ন ডলার মার্কিন বিনিয়োগ চায় বাংলাদেশ</a></h3>
+    <p class="card-summary">বাংলাদেশে আগামী পাঁচ বছরে আরও ৫ বিলিয়ন মার্কিন ডলারের বিনিয়োগ আনতে যুক্তরাষ্ট্রের ব্যবসায়ী ও বিনিয়োগকারীদের সঙ্গে কাজ করার কথা জানিয়েছে সরকার।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/economics/news/662770" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Barvida-2609121559.jpg" alt="ইভি গাড়ি আমদানির সুযোগ চায় বারভিডা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">অর্থনীতি</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/economics/news/662767" target="_blank" rel="noopener">ইভি গাড়ি আমদানির সুযোগ চায় বারভিডা</a></h3>
+    <p class="card-summary">নতুন ইলেকট্রিক গাড়ির পাশাপাশি ব্যবহৃত ও রিকন্ডিশন্ড ইলেকট্রিক ভেহিক্যাল (ইভি) আমদানির সুযোগ চেয়েছে বাংলাদেশ রিকন্ডিশন্ড ভেহিক্যালস ইমপোর্টার্স অ্যান্ড ডিলার্স অ্যাসোসিয়েশন (বারভিডা)।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/economics/news/662767" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-2">
+          <div class="section-heading">
+            <h2>সর্বশেষ</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/MUSHAFIR-SCHOOL-2609121618.jpg" alt="শুক্রবার এলেই বদলে যায় জয়দেবপুর স্টেশন, মাদুরে বসে স্বপ্ন বোনে শত পথশিশু" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/positive-bangladesh/news/662769" target="_blank" rel="noopener">শুক্রবার এলেই বদলে যায় জয়দেবপুর স্টেশন, মাদুরে বসে স্বপ্ন বোনে শত পথশিশু</a></h3>
+    <p class="card-summary">শুক্রবার বিকেল। জয়দেবপুর রেলওয়ে জংশন স্টেশনের ব্যস্ততা তখনও কমেনি। ট্রেন আসছে, ট্রেন যাচ্ছে। যাত্রীদের ছোটাছুটি, হকারদের হাঁকডাক—সবই চলছে প্রতিদিনের মতো। তবে, স্টেশনের একটি পরিত্যক্ত প্ল্যাটফর্মে দৃশ্যটা একটু আলাদা।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/positive-bangladesh/news/662769" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/sajjad-1292026-2609121057.jpg" alt="জাতীয় নিরাপত্তায় বাংলাদেশের কাঠামোগত সংস্কার দরকার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/interview/news/662725" target="_blank" rel="noopener">জাতীয় নিরাপত্তায় বাংলাদেশের কাঠামোগত সংস্কার দরকার</a></h3>
+    <p class="card-summary">ড. সাজ্জাদ এম. জসীমউদ্দীন ফ্রান্সের কেজ বিজনেস স্কুলের অধ্যাপক এবং সেখানকার ‘জিওপলিটিক্স স্ট্র্যাটেজি ল্যাব’-এর প্রধান।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/interview/news/662725" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/police-mtyp1kp8vdruj11-20260913000529.jpg" alt="হাসপাতালে পুলিশ কর্মকর্তা, ফাঁকা বাড়িতে চোরের হানা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/country/news/1156538" target="_blank" rel="noopener">হাসপাতালে পুলিশ কর্মকর্তা, ফাঁকা বাড়িতে চোরের হানা</a></h3>
+    <p class="card-summary">মুন্সিগঞ্জের শ্রীনগরে এক পুলিশ কর্মকর্তার বাড়িতে চুরির ঘটনা ঘটেছে। শুক্রবার দিনগত রাত ২টার দিকে উপজেলার ভাগ্যকূল ইউনিয়নের মান্দ্রা গ্রামে এ ঘটনা ঘটে। এতে প্রায় ৮ লাখ টাকার মালামাল লুট হয়েছে বলে দাবি করেছেন ক্ষতিগ্রস্তরা</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/country/news/1156538" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/img-20260912-wa0011-20260912214417-mtyklt2n8envf4j-20260912220014.jpg" alt="যুক্তরাষ্ট্র থেকে আরও ৫ বিলিয়ন ডলার বিনিয়োগ আনা হবে: বাণিজ্যমন্ত্রী" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/economy/news/1156529" target="_blank" rel="noopener">যুক্তরাষ্ট্র থেকে আরও ৫ বিলিয়ন ডলার বিনিয়োগ আনা হবে: বাণিজ্যমন্ত্রী</a></h3>
+    <p class="card-summary">যুক্তরাষ্ট্র থেকে আগামী পাঁচ বছরে অতিরিক্ত ৫ বিলিয়ন মার্কিন ডলার বিনিয়োগ আনার লক্ষ্যে সরকার ও আমেরিকান চেম্বার অব কমার্স ইন বাংলাদেশ (অ্যামচ্যাম) একসঙ্গে কাজ করবে বলে জানিয়েছেন বাণিজ্যমন্ত্রী খন্দকার আব্দুল মুক্তাদির। তি</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/economy/news/1156529" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/cmm-mtyk472k9gok67u-20260912214557.jpg" alt="গুলশানে আওয়ামী লীগের ঝটিকা মিছিল, গ্রেফতার ২৫ জন রিমান্ডে" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/law-courts/news/1156523" target="_blank" rel="noopener">গুলশানে আওয়ামী লীগের ঝটিকা মিছিল, গ্রেফতার ২৫ জন রিমান্ডে</a></h3>
+    <p class="card-summary">রাজধানীর গুলশানে কার্যক্রম নিষিদ্ধ আওয়ামী লীগ ও এর অঙ্গ সংগঠনের নেতাকর্মীদের ঝটিকা মিছিল এবং ককটেল বিস্ফোরণের অভিযোগে করা মামলায় গ্রেফতার ২৫ জনকে জিজ্ঞাসাবাদের জন্য ১০ দিন করে রিমান্ডে পাঠিয়েছেন আদালত। শনিবার (১২ সেপ্টেম</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/law-courts/news/1156523" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/journalist-20260912212432.jpg" alt="শ্রদ্ধা-ভালোবাসায় সাংবাদিক পুলক চ্যাটার্জির শেষকৃত্য সম্পন্ন" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/country/news/1156520" target="_blank" rel="noopener">শ্রদ্ধা-ভালোবাসায় সাংবাদিক পুলক চ্যাটার্জির শেষকৃত্য সম্পন্ন</a></h3>
+    <p class="card-summary">বরিশালের সর্বস্তরের সাংবাদিকদের শ্রদ্ধা ও ভালোবাসায় দৈনিক সমকালের সাবেক বরিশাল ব্যুরো প্রধান ও বরিশাল প্রেসক্লাবের সাবেক সাধারণ সম্পাদক পুলক চ্যাটার্জির শেষকৃত্য সম্পন্ন হয়েছে। শনিবার (১২ সেপ্টেম্বর) বিকেল সাড়ে ৩টার দিক</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/country/news/1156520" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/untitled-design-20260912210717.jpg" alt="দোকান খুলে ক্রেতার অপেক্ষা, ক্রেতা আসার সময় হলেই বিদ্যুৎ উধাও" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/country/news/1156517" target="_blank" rel="noopener">দোকান খুলে ক্রেতার অপেক্ষা, ক্রেতা আসার সময় হলেই বিদ্যুৎ উধাও</a></h3>
+    <p class="card-summary">সারাদিন দোকান খোলা থাকলেও ক্রেতার দেখা নেই। বিকেলের পর যখন কিছুটা বেচাকেনা শুরু হয়, তখনই হানা দেয় লোডশেডিং। দেড় থেকে দুই ঘণ্টা, কখনো তারও বেশি সময় বিদ্যুৎ না থাকায় সন্ধ্যার গুরুত্বপূর্ণ বিক্রির সময়টুকুও কাজে লাগাতে পারছে</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/country/news/1156517" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/whatsapp-20260912204104.jpg" alt="জামালপুরে ওসির হোয়াটসঅ্যাপ হ্যাক করে টাকা আদায়ের চেষ্টা, জিডি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">সর্বশেষ</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/country/news/1156512" target="_blank" rel="noopener">জামালপুরে ওসির হোয়াটসঅ্যাপ হ্যাক করে টাকা আদায়ের চেষ্টা, জিডি</a></h3>
+    <p class="card-summary">জামালপুরের মেলান্দহ থানার ভারপ্রাপ্ত কর্মকর্তা (ওসির) নাম ও নম্বর ব্যবহার করে হোয়াটসঅ্যাপে বিভিন্ন শ্রেণি-পেশার মানুষকে ভয়ভীতি ও হুমকি দেখিয়ে টাকা আদায়ের চেষ্টা করা হয়েছে বলে অভিযোগ উঠেছে। এ ঘটনায় ওসি এটিএম মাহমুদুল হক থ</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/country/news/1156512" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-3">
+          <div class="section-heading">
+            <h2>বাংলাদেশ</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/bsf-2609121603.jpg" alt="পদ্মায় নৌকাডুবি, ১০ বাংলাদেশিকে উদ্ধার করল বিএসএফ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662768" target="_blank" rel="noopener">পদ্মায় নৌকাডুবি, ১০ বাংলাদেশিকে উদ্ধার করল বিএসএফ</a></h3>
+    <p class="card-summary">চাঁপাইনবাবগঞ্জ সীমান্তে পদ্মা নদীতে যাত্রীবাহী ডিঙি নৌকা ডুবে পানিতে ভেসে যাওয়া ১০ বাংলাদেশিকে উদ্ধার করেছেন ভারতীয় সীমান্তরক্ষী বাহিনীর (বিএসএফ) সদস্যরা।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662768" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Asadul-Hahib-Dulu-2609121536.jpg" alt="২০২৭ সালে তিস্তা মহাপরিকল্পনার কাজ শুরু হবে: দুলু" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662764" target="_blank" rel="noopener">২০২৭ সালে তিস্তা মহাপরিকল্পনার কাজ শুরু হবে: দুলু</a></h3>
+    <p class="card-summary">আগামী বছর (২০২৭ সালে) তিস্তা মহাপরিকল্পনার আনুষ্ঠানিক কাজ শুরু করা সম্ভব হবে বলে জানিয়েছেন দুর্যোগ ব্যবস্থাপনা ও ত্রাণমন্ত্রী আসাদুল হাবিব দুলু।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662764" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/MixCollage-12-Sep-2026-08-55-PM-3654-2609121456.jpg" alt="শ্রীপুরে পৃথক স্থানে ২ অচেতন ব্যক্তি উদ্ধার, উদ্বেগ বাড়ছে" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662758" target="_blank" rel="noopener">শ্রীপুরে পৃথক স্থানে ২ অচেতন ব্যক্তি উদ্ধার, উদ্বেগ বাড়ছে</a></h3>
+    <p class="card-summary">একজনকে পাওয়া গেল গজারি বনের নির্জন সড়কে, আরেকজনকে একই দিনে উদ্ধার করা হলো জনবসতিপূর্ণ এলাকার কাছাকাছি। দুজনই অচেতন ছিলেন।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662758" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/sourove-2609121451.jpg" alt="অন্যকে বাঁচাতে গিয়ে প্রাণ দিল সৌরভ, কফিনের সামনে বাবার আর্তনাদ—‘আমার আগে কেন গেলি?’" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662756" target="_blank" rel="noopener">অন্যকে বাঁচাতে গিয়ে প্রাণ দিল সৌরভ, কফিনের সামনে বাবার আর্তনাদ—‘আমার আগে কেন গেলি?’</a></h3>
+    <p class="card-summary">শীতলক্ষ্যা নদীর উত্তাল স্রোতে চারজন ডুবে যাওয়ার পর তাদের বাঁচাতে জীবনের মায়া ত্যাগ করে নদীতে ঝাঁপ দিয়েছিল এসএসসি পরীক্ষার্থী সৌরভ। প্রাণপণ চেষ্টা করে চারজনের মধ্যে একজনকে জীবিত উদ্ধার করে তীরে তুলতেও সক্ষম হয়েছিল সে। পরে</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662756" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/cheater-2609121433.jpg" alt="মাদ্রাসায় দুই শিশুকে গরম খুন্তির ছ্যাঁকা, ৩ শিক্ষক গ্রেপ্তার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662754" target="_blank" rel="noopener">মাদ্রাসায় দুই শিশুকে গরম খুন্তির ছ্যাঁকা, ৩ শিক্ষক গ্রেপ্তার</a></h3>
+    <p class="card-summary">গাজীপুর মহানগরের গাছা এলাকায় খেলার সময় পায়জামা খুলে যাওয়াকে কেন্দ্র করে দুই মাদ্রাসা শিক্ষার্থীকে ভয়াবহ নির্যাতনের অভিযোগ উঠেছে। দুই শিশুকে মারধরের পাশাপাশি উত্তপ্ত লোহার খুন্তি দিয়ে শরীরের বিভিন্ন স্থানে ছ্যাঁকা দেওয়া হ</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662754" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/amir-2609121410.jpg" alt="জাতির প্রয়োজনে সরকারকে যেকোনো সময় সহযোগিতা করবে বিরোধী দল" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662751" target="_blank" rel="noopener">জাতির প্রয়োজনে সরকারকে যেকোনো সময় সহযোগিতা করবে বিরোধী দল</a></h3>
+    <p class="card-summary">জাতির প্রয়োজনে সরকার চাইলে বিরোধী দল যেকোনো সময় সহযোগিতা করবে বলে জানিয়েছেন বাংলাদেশ জামায়াতে ইসলামীর আমির ও জাতীয় সংসদের বিরোধী দলীয় নেতা ডা. শফিকুর রহমান।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662751" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Pic-Bhola-2609121405.jpg" alt="মনপুরার উন্নয়নে বিভিন্ন উদ্যোগ এমপি নয়নের" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662750" target="_blank" rel="noopener">মনপুরার উন্নয়নে বিভিন্ন উদ্যোগ এমপি নয়নের</a></h3>
+    <p class="card-summary">দীর্ঘ দিনের যোগাযোগ সংকট, বিদ্যুৎ-সুবিধার সীমাবদ্ধতা আর নাগরিক সেবার নানা ঘাটতি— সবকিছু কাটিয়ে দ্বীপ উপজেলা মনপুরাকে উন্নয়নের মূলধারায় নিতে একাধিক উদ্যোগের কথা জানিয়েছেন ভোলা-৪ আসনের সংসদ সদস্য মোহাম্মদ নূরুল ইসলাম নয়ন।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662750" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/ahammad-2609121354.jpg" alt="ভুল ট্রেনে উঠে হবিগঞ্জ থেকে ময়মনসিংহ, পুলিশের তৎপরতায় পরিবারের কাছে ফিরল শিশু" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বাংলাদেশ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/bangladesh/news/662748" target="_blank" rel="noopener">ভুল ট্রেনে উঠে হবিগঞ্জ থেকে ময়মনসিংহ, পুলিশের তৎপরতায় পরিবারের কাছে ফিরল শিশু</a></h3>
+    <p class="card-summary">বাড়ি থেকে বের হয়ে হবিগঞ্জ জেলার শায়েস্তাগঞ্জ রেলওয়ে জংশনে এসেছিল শিশু আহম্মদ মিয়া। ভুল ট্রেনে উঠে পড়ে সে। ট্রেন ছুটতে ছুটতে কখন যে হবিগঞ্জ পেরিয়ে ময়মনসিংহে পৌঁছে যায়, তা বুঝতেই পারেনি শিশুটি। অচেনা শহরে একসময় দিশেহারা হয়</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/bangladesh/news/662748" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-4">
+          <div class="section-heading">
+            <h2>রাজনীতি</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/rizvi-bnp-1292026-2609121552.jpg" alt="নিষিদ্ধ দল উঁকি মারার চেষ্টা করছে, গোয়েন্দা সংস্থাগুলো কী করছে: রিজভী" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/politics/news/662766" target="_blank" rel="noopener">নিষিদ্ধ দল উঁকি মারার চেষ্টা করছে, গোয়েন্দা সংস্থাগুলো কী করছে: রিজভী</a></h3>
+    <p class="card-summary">কার্যক্রম নিষিদ্ধ রাজনৈতিক দল (আওয়ামী লীগ) কীভাবে আবার বিপুল নেতাকর্মী জড়ো করতে পারল এবং প্রকাশ্যে আসার চেষ্টা করল, সেই প্রশ্ন তুলেছেন বিএনপির ভারপ্রাপ্ত মহাসচিব ও প্রধানমন্ত্রীর রাজনৈতিক উপদেষ্টা রুহুল কবির রিজভী।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/politics/news/662766" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/jewl-1292026-2609121421.jpg" alt="স্বেচ্ছাসেবক দলের কেন্দ্রীয় কমিটির নেতার পদ স্থগিত, যা জানা গেল" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/politics/news/662753" target="_blank" rel="noopener">স্বেচ্ছাসেবক দলের কেন্দ্রীয় কমিটির নেতার পদ স্থগিত, যা জানা গেল</a></h3>
+    <p class="card-summary">বাংলাদেশ জাতীয়তাবাদী স্বেচ্ছাসেবক দলের কেন্দ্রীয় কমিটির সহ-সাংগঠনিক সম্পাদক গাজী সুলতান জুয়েলের পদসহ দলীয় সব পদ স্থগিত করা হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/politics/news/662753" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/jammat-bogra-1292026-2609121207.jpg" alt="বগুড়া তার ন্যায্য পাওনাটুকু পাক: ডা. শফিকুর" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/politics/news/662736" target="_blank" rel="noopener">বগুড়া তার ন্যায্য পাওনাটুকু পাক: ডা. শফিকুর</a></h3>
+    <p class="card-summary">জামায়াতে ইসলামীর আমির ও বিরোধীদলীয় নেতা ডা. শফিকুর রহমান বলেছেন, “বগুড়া দীর্ঘদিন থে‌কে উপেক্ষিত ও অবহেলিত রয়েছে। বগুড়ার উন্নয়ন হোক, বগুড়া ন্যায্য পাওনা পেয়ে যাক—এটাই চাই।”</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/politics/news/662736" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/795341642-1470152898500748-1307375455840380059-n-mtym3hroqn9c6pu-20260912224309.jpg" alt="ঠাকুরগাঁও-১ আসনে বিএনপির প্রার্থী চূড়ান্ত হবে যেদিন" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/politics/news/1156533" target="_blank" rel="noopener">ঠাকুরগাঁও-১ আসনে বিএনপির প্রার্থী চূড়ান্ত হবে যেদিন</a></h3>
+    <p class="card-summary">বিএনপির সাবেক মহাসচিব ও বর্তমান রাষ্ট্রপতি মির্জা ফখরুল ইসলাম আলমগীরের শূন্য আসনে উপ-নির্বাচনের প্রার্থী চূড়ান্ত করবে দলটি। আগামী ১৮ সেপ্টেম্বর সন্ধ্যায় মনোনয়ন বোর্ডের সভায় এ বিষয়ে সিদ্ধান্ত নেওয়া হবে। বিএনপির জাতীয় স্থা</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/politics/news/1156533" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/new-bnp-mtykdwuzd210t7a-20260912215622.jpg" alt="বিএনপির স্থায়ী কমিটির বৈঠকে যেসব বিষয়ে আলোচনা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/politics/news/1156528" target="_blank" rel="noopener">বিএনপির স্থায়ী কমিটির বৈঠকে যেসব বিষয়ে আলোচনা</a></h3>
+    <p class="card-summary">ডেঙ্গু প্রতিরোধে ঢাকাসহ সারাদেশে প্রচারপত্র বিতরণ করবে বিএনপি। দেশের নামকরা চিকিৎসক ও বিশেষজ্ঞদের দিয়ে তৈরি করা হবে ওই প্রচারপত্র। পাশাপাশি সামাজিক যোগাযোগমাধ্যম, রেডিও ও টেলিভিশনে ডেঙ্গু সচেতনতামূলক অনুষ্ঠান বারবার প্রচ</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/politics/news/1156528" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/img-20260912-wa01451-20260912193330-mtyhl10ef7ieqe8-20260912203551.jpg" alt="ঢাকা দক্ষিণ সিটির জনগণ বঞ্চিতদের তালিকায় শীর্ষে: ফজলুল করীম মারুফ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">রাজনীতি</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/politics/news/1156509" target="_blank" rel="noopener">ঢাকা দক্ষিণ সিটির জনগণ বঞ্চিতদের তালিকায় শীর্ষে: ফজলুল করীম মারুফ</a></h3>
+    <p class="card-summary">ঢাকা দক্ষিণ সিটি করপোরেশনের জনগণ বঞ্চিতদের তালিকায় শীর্ষে অবস্থান করছে বলে মন্তব্য করেছেন ইসলামী আন্দোলন বাংলাদেশের সহকারী মহাসচিব ও ঢাকা মহানগর দক্ষিণের সভাপতি শেখ ফজলুল করীম মারুফ। তিনি বলেন, বাংলাদেশে নবজাতক থেকে শুরু</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/politics/news/1156509" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-5">
+          <div class="section-heading">
+            <h2>খেলাধুলা</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Rishad-2609121540.gif" alt="রিশাদ-আলিসের ঘূর্ণিতে দ. আফ্রিকার বিপক্ষে বাংলাদেশের দাপুটে জয়" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662765" target="_blank" rel="noopener">রিশাদ-আলিসের ঘূর্ণিতে দ. আফ্রিকার বিপক্ষে বাংলাদেশের দাপুটে জয়</a></h3>
+    <p class="card-summary">বৃষ্টিতে পণ্ড হয়ে যায় প্রথম দুই ম্যাচ। তাই তিন ম্যাচের সিরিজে ফল পেতে শেষ ওয়ানডেটির দিকেই তাকিয়ে ছিল সবাই।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662765" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/EN-PAK-1292026-2609121301.jpg" alt="ইংল্যান্ডের কাছে হোয়াইটওয়াশ পাকিস্তান" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662743" target="_blank" rel="noopener">ইংল্যান্ডের কাছে হোয়াইটওয়াশ পাকিস্তান</a></h3>
+    <p class="card-summary">জর্ডান কক্স ও অধিনায়ক জো রুটের দুর্দান্ত হাফ-সেঞ্চুরিতে পাকিস্তানকে তৃতীয় ও শেষ টেস্টে ৮ উইকেটে হারিয়েছে ইংল্যান্ড।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662743" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Bd-vs-Nepal-2609121220.jpg" alt="যে কারণে ব্যস্ততার মাঝেও নেপালের বিপক্ষে সিরিজের খেলবে বাংলাদেশ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662739" target="_blank" rel="noopener">যে কারণে ব্যস্ততার মাঝেও নেপালের বিপক্ষে সিরিজের খেলবে বাংলাদেশ</a></h3>
+    <p class="card-summary">এর মধ্যেই নতুন একটি দ্বিপাক্ষিক সিরিজের প্রস্তাব এসেছে নেপাল থেকে। গত বৃহস্পতিবার যুব ও ক্রীড়া প্রতিমন্ত্রী আমিনুল হকের সঙ্গে সাক্ষাত করেন বাংলাদেশে নিযুক্ত নেপালের রাষ্ট্রদূত ঘনশ্যাম ভান্ডারি।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662739" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Fifa-president-2609121136.jpg" alt="২০৩০ বিশ্বকাপ ফাইনাল নিয়ে মরোক্কোর মিথ্যাচার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662730" target="_blank" rel="noopener">২০৩০ বিশ্বকাপ ফাইনাল নিয়ে মরোক্কোর মিথ্যাচার</a></h3>
+    <p class="card-summary">২০৩০ ফিফা বিশ্বকাপের ফাইনাল মরক্কোর কাসাব্লাঙ্কায় অনুষ্ঠিত হবে, দেশটির ফুটবল ফেডারেশন প্রধান ফৌজি লেকজার এমন আগাম ঘোষণাকে ঘিরে তীব্র অসন্তোষ প্রকাশ করেছেন মরক্কোর প্রধানমন্ত্রী আজিজ আখানুশ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662730" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Masta-2609120955.jpg" alt="মেসির হ্যাটট্রিকের রেকর্ড ভাঙলেন ‘নতুন মেসি’ মাস্তানতুয়োনো" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662714" target="_blank" rel="noopener">মেসির হ্যাটট্রিকের রেকর্ড ভাঙলেন ‘নতুন মেসি’ মাস্তানতুয়োনো</a></h3>
+    <p class="card-summary">আর্জেন্টিনায় তাঁকে ডাকা হয় ‘নতুন মেসি’! খেলেনও বাঁ পায়ে। বল পায়ে যখন ছোটেন তখন তাঁকে দেখতেও তরুণ বয়সের মেসির মতোই লাগে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662714" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/quinones-20260912224310.jpg" alt="ব্যালন ডি’অরে ৬ষ্ঠ মেক্সিকান কুইনোনেস, সবারই স্বপ্ন এক" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/sports/football/1156534" target="_blank" rel="noopener">ব্যালন ডি’অরে ৬ষ্ঠ মেক্সিকান কুইনোনেস, সবারই স্বপ্ন এক</a></h3>
+    <p class="card-summary">ব্যালন ডি’অর- বিশ্ব ফুটবলের সবচেয়ে মর্যাদাপূর্ণ ব্যক্তিগত পুরস্কারগুলোর একটি। ইউরোপের শীর্ষ ক্লাবগুলোর তারকা, বিশ্বকাপজয়ী ফুটবলার কিংবা চ্যাম্পিয়নস লিগের নায়ক- এই পুরস্কারের সংক্ষিপ্ত তালিকায় সাধারণত তাদেরই দেখা যায়। তবে</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/sports/football/1156534" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/fifa1-20260912221816.jpg" alt="অর্থ আত্মসাতের দায়ে দুই কর্মকর্তাকে আজীবন নিষিদ্ধ করল ফিফা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/sports/football/1156531" target="_blank" rel="noopener">অর্থ আত্মসাতের দায়ে দুই কর্মকর্তাকে আজীবন নিষিদ্ধ করল ফিফা</a></h3>
+    <p class="card-summary">ফুটবলের অর্থ আত্মসাৎ ও ক্ষমতার অপব্যবহারের বিরুদ্ধে আবারও কঠোর অবস্থান নিয়েছে ফিফা। আর্থিক অনিয়মের দায়ে দুই সাবেক জাতীয় ফুটবল ফেডারেশন সভাপতিকে আজীবনের জন্য ফুটবল থেকে নিষিদ্ধ করেছে বিশ্ব ফুটবলের নিয়ন্ত্রক সংস্থার বিচারি</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/sports/football/1156531" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/bhaibhab-20260912220019.jpg" alt="‘৮০-র দশকের’ সূর্যবংশীকে চিনতেই পারলেন না ভারতীয় তারকারা!" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">খেলাধুলা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/sports/cricket/1156530" target="_blank" rel="noopener">‘৮০-র দশকের’ সূর্যবংশীকে চিনতেই পারলেন না ভারতীয় তারকারা!</a></h3>
+    <p class="card-summary">সামাজিক যোগাযোগমাধ্যমে এখন নস্টালজিয়ার জোয়ার। কৃত্রিম বুদ্ধিমত্তার (এআই) সাহায্যে ছবি পরিবর্তন করে ১৯৮০-এর দশকের আবহে ফিরিয়ে নেওয়া হচ্ছে মানুষকে। পুরোনো দিনের ফ্যাশন, চুলের স্টাইল, পোশাক আর ছবি তোলার ধরন- সব মিলিয়ে তৈরি </p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/sports/cricket/1156530" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-6">
+          <div class="section-heading">
+            <h2>বিনোদন</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Dighi-2609121530.jpg" alt="সমুদ্রতীরে শাড়িতে ধরা দিলেন অন্যরকম দীঘি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662763" target="_blank" rel="noopener">সমুদ্রতীরে শাড়িতে ধরা দিলেন অন্যরকম দীঘি</a></h3>
+    <p class="card-summary">সন্ধ্যার নরম আলো, সামনে উত্তাল সমুদ্র আর চারপাশে সামুদ্রিক বাতাস; সব মিলিয়ে অন্যরকম এক আবহে ধরা দিলেন অভিনেত্রী প্রার্থনা ফারদিন দীঘি।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662763" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Joy-hero-Alam-2609121456.jpg" alt="‘হিরো আলমই ভালো ছিল’, কেন বললেন জয়" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662757" target="_blank" rel="noopener">‘হিরো আলমই ভালো ছিল’, কেন বললেন জয়</a></h3>
+    <p class="card-summary">সামাজিক যোগাযোগমাধ্যমে তারকা ও পরিচিত মুখদের নানা ধরনের ফ্যাশন, সাজসজ্জা কিংবা কনটেন্ট প্রায়ই আলোচনার জন্ম দেয়।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662757" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Amisha-Patel-2609121343.jpg" alt="আমিশার বাড়িতে ৫ লাখ রুপির গয়না চুরি, গৃহকর্মী গ্রেপ্তার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662746" target="_blank" rel="noopener">আমিশার বাড়িতে ৫ লাখ রুপির গয়না চুরি, গৃহকর্মী গ্রেপ্তার</a></h3>
+    <p class="card-summary">মুম্বাইয়ে অভিনেত্রী আমিশা প্যাটেলের পরিবারের বাড়ি থেকে প্রায় ৫ লাখ রুপি মূল্যের গয়না চুরির অভিযোগে এক গৃহকর্মীকে গ্রেপ্তার করেছে পুলিশ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662746" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Popi-2609121315.jpg" alt="সৎ মার সংসারের আঘাত এখনো কাটিয়ে উঠতে পারিনি: পপি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662744" target="_blank" rel="noopener">সৎ মার সংসারের আঘাত এখনো কাটিয়ে উঠতে পারিনি: পপি</a></h3>
+    <p class="card-summary">আলো ঝলমলে চলচ্চিত্রজীবনের আড়ালেও জমে ছিল দীর্ঘদিনের কিছু না-বলা কষ্ট। এবার সেই অভিজ্ঞতার কথাই সামনে আনলেন নব্বইয়ের দশকের জনপ্রিয় অভিনেত্রী সাদিকা পারভিন পপি।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662744" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Marriage-2609121211.jpg" alt="বিয়ে করলেন ইসরাত পায়েল" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662737" target="_blank" rel="noopener">বিয়ে করলেন ইসরাত পায়েল</a></h3>
+    <p class="card-summary">উপস্থাপনা ও মডেলিংয়ের পরিচিত মুখ ইসরাত পায়েলের জীবনে যোগ হলো নতুন অধ্যায়। পরিবার ও কাছের মানুষদের সম্মতিতে ব্যবসায়ী আল-আমিন চৌধুরীর সঙ্গে বিয়ের বন্ধনে আবদ্ধ হয়েছেন তিনি।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662737" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Sani-Mousumi-2609121056.jpg" alt="৩১ বছর পরও মৌসুমীর সঙ্গে সম্পর্ক অটুট, রহস্য জানালেন ওমর সানী" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662724" target="_blank" rel="noopener">৩১ বছর পরও মৌসুমীর সঙ্গে সম্পর্ক অটুট, রহস্য জানালেন ওমর সানী</a></h3>
+    <p class="card-summary">৩১ বছরের দাম্পত্যে অনেক কিছুই বদলায়—অভ্যাস বদলায়, সংসারের ব্যস্ততা বাড়ে, সন্তানরা বড় হয়। কিন্তু, কিছু মানুষের প্রতি মুগ্ধতা থেকে যায় আগের মতোই।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662724" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Sohini-Shovon-2609120951.jpg" alt="অনাগত সন্তানকে ‘টুল’ ডাকছেন শোভন, হাসলেন সোহিনী" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662713" target="_blank" rel="noopener">অনাগত সন্তানকে ‘টুল’ ডাকছেন শোভন, হাসলেন সোহিনী</a></h3>
+    <p class="card-summary">মা হওয়ার সময় যত এগিয়ে আসছে, সোহিনী সরকার ও শোভনের সংসারে ততই বাড়ছে নতুন অতিথিকে ঘিরে নানা পরিকল্পনা।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662713" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/ladi-gaga-mtykf4ev378hjju-20260912215437.jpg" alt="লেডি গাগার ঘরে নতুন অতিথি, ৪০ বছরে মা হলেন গায়িকা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/entertainment/news/1156527" target="_blank" rel="noopener">লেডি গাগার ঘরে নতুন অতিথি, ৪০ বছরে মা হলেন গায়িকা</a></h3>
+    <p class="card-summary">পপসংগীত তারকা লেডি গাগার জীবনে এলো নতুন অধ্যায়। প্রথম সন্তানের মা হয়েছেন ৪০ বছর বয়সী এই গ্র্যামিজয়ী গায়িকা। বাগ্‌দত্তা মাইকেল পোলানস্কির ঔরসে সন্তানের জন্ম দিয়েছেন তিনি। গাগার ঘনিষ্ঠ একটি সূত্র বিষয়টি জানিয়েছে ‘পিপল’ সাম</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/entertainment/news/1156527" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-7">
+          <div class="section-heading">
+            <h2>জাতীয়</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/hefahat-1292026-2609121517.jpg" alt="ইজতেমা মাঠের হামলাকারীরা খুনি: হেফাজত আমির" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662762" target="_blank" rel="noopener">ইজতেমা মাঠের হামলাকারীরা খুনি: হেফাজত আমির</a></h3>
+    <p class="card-summary">হেফাজতে ইসলামের আমির আল্লামা মুহিব্বুল্লাহ বাবুনগরী টঙ্গীর ইজতেমার মাঠে যারা নিরীহ মাদরাসা ছাত্র ও মুসল্লিদের ওপর হামলা চালিয়েছে তারা সন্ত্রাসী ও খুনি। হামলাকারীদের গ্রেপ্তার করে দৃষ্টান্তমূলক শাস্তি দিতে হবে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662762" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/ijtema-1292026-2609121505.jpg" alt="ইজতেমা ময়দানে সাদপন্থীদের প্রবেশ নিষিদ্ধ চায় ওলামা-মাশায়েখ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662760" target="_blank" rel="noopener">ইজতেমা ময়দানে সাদপন্থীদের প্রবেশ নিষিদ্ধ চায় ওলামা-মাশায়েখ</a></h3>
+    <p class="card-summary">টঙ্গীর বিশ্ব ইজতেমা ময়দানে ২০১৮ ও ২০২৪ সালের সংঘর্ষ ও হত্যাকাণ্ডের দ্রুত বিচার, ঘটনায় জড়িত ব্যক্তিদের গ্রেপ্তার করে দৃষ্টান্তমূলক শাস্তি এবং ইজতেমা ময়দানে সাদপন্থীদের প্রবেশ ও তাবলিগি কার্যক্রম নিষিদ্ধ রাখার দাবি জানিয়েছ</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662760" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/chaad-dekha-1292026-2609121353.jpg" alt="পবিত্র ফাতেহা-ই-ইয়াজদাহম ২৩ সেপ্টেম্বর" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662747" target="_blank" rel="noopener">পবিত্র ফাতেহা-ই-ইয়াজদাহম ২৩ সেপ্টেম্বর</a></h3>
+    <p class="card-summary">১৪৪৮ হিজরি সনের পবিত্র রবিউস সানি মাসের চাঁদ দেখা গেছে, ফলে রবিবার থেকে পবিত্র রবিউস সানি মাস গণনা করা শুরু হবে। ২৩ সেপ্টেম্বর বুধবার পবিত্র ফাতেহা-ই-ইয়াজদাহম উদযাপিত হবে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662747" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Oil-2609121133.jpg" alt="মোংলায় সাড়ে ১৫ হাজার লিটার ভোজ্যতেল উদ্ধার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662729" target="_blank" rel="noopener">মোংলায় সাড়ে ১৫ হাজার লিটার ভোজ্যতেল উদ্ধার</a></h3>
+    <p class="card-summary">মোংলায় একটি মুদি ব্যবসায়ীর গোডাউনে অভিযান চালিয়ে অবৈধভাবে মজুদ করা প্রায় সাড়ে ১৫ হাজার লিটার অপরিশোধিত সয়াবিন তেল উদ্ধার করেছে কোস্ট গার্ড।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662729" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/EC-2609121115.jpg" alt="প্রবাসী ভোটারদের নিবন্ধন ২০ সেপ্টেম্বর পর্যন্ত" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662727" target="_blank" rel="noopener">প্রবাসী ভোটারদের নিবন্ধন ২০ সেপ্টেম্বর পর্যন্ত</a></h3>
+    <p class="card-summary">ঠাকুরগাঁও-১ আসনের উপনির্বাচনে পোস্টাল ব্যালটের মাধ্যমে ভোট দিতে আগ্রহী প্রবাসী ভোটারদের আগামী ২০ সেপ্টেম্বরের মধ্যে নিবন্ধন করতে হবে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662727" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Lash_Uddar_Female-risingbd-2609121025.jpg" alt="জাতীয় ঈদগাহ এলাকা থেকে দুই মরদেহ উদ্ধার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/national/news/662720" target="_blank" rel="noopener">জাতীয় ঈদগাহ এলাকা থেকে দুই মরদেহ উদ্ধার</a></h3>
+    <p class="card-summary">রাজধানীর জাতীয় ঈদগাহ ময়দান সংলগ্ন ফুটপাত ও কদম ফোয়ারা মোড় থেকে দুই ব্যক্তির মরদেহ উদ্ধার করেছে পুলিশ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/national/news/662720" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/ctg-death-mtyq1hx613wjteo-20260913003256.jpg" alt="ডেঙ্গুতে প্রাণ গেলো অন্তঃসত্ত্বার, বাঁচেনি গর্ভের সন্তানও" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/national/news/1156541" target="_blank" rel="noopener">ডেঙ্গুতে প্রাণ গেলো অন্তঃসত্ত্বার, বাঁচেনি গর্ভের সন্তানও</a></h3>
+    <p class="card-summary">চট্টগ্রামে ডেঙ্গুতে আক্রান্ত হয়ে অর্পিতা দাশ (৩৫) নামের এক অন্তঃসত্ত্বার মৃত্যু হয়েছে। শুক্রবার বিকেলে চট্টগ্রাম মেডিকেল কলেজ হাসপাতালের নিবিড় পরিচর্যা কেন্দ্রে (আইসিইউ) তার মৃত্যু হয়। একই সঙ্গে তার গর্ভে থাকা সন্তানও মা</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/national/news/1156541" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/img-20260912-wa01361-20260912222610-mtypqasiomeit9q-20260913002429.jpg" alt="মিরপুরে বিশেষ অভিযানে গ্রেফতার ৬৬" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">জাতীয়</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/national/news/1156540" target="_blank" rel="noopener">মিরপুরে বিশেষ অভিযানে গ্রেফতার ৬৬</a></h3>
+    <p class="card-summary">রাজধানীর মিরপুর মডেল থানা এলাকায় অভিযান চালিয়ে বিভিন্ন অপরাধে জড়িত থাকার অভিযোগে ৬৬ জনকে গ্রেফতার করেছে মিরপুর মডেল থানা পুলিশ। শনিবার (১২ সেপ্টেম্বর) ঢাকা মেট্রোপলিটন পুলিশের (ডিএমপি) মিডিয়া অ্যান্ড পাবলিক রিলেশন্স বিভা</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/national/news/1156540" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-8">
+          <div class="section-heading">
+            <h2>শিক্ষা</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/bobi-1292026-2609121416.jpg" alt="বাংলা-ইংরেজি মাধ্যমের কারিকুলামে সামঞ্জস্য আনা হবে: গণশিক্ষা প্রতিমন্ত্রী" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">শিক্ষা</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/education/news/662752" target="_blank" rel="noopener">বাংলা-ইংরেজি মাধ্যমের কারিকুলামে সামঞ্জস্য আনা হবে: গণশিক্ষা প্রতিমন্ত্রী</a></h3>
+    <p class="card-summary">বাংলাদেশের শিক্ষা ব্যবস্থাকে বৈশ্বিক মানে উন্নিত করতে বাংলা ও ইংরেজি মাধ্যমের কারিকুলামে প্রয়োজনীয় সামঞ্জস্য আনা হবে বলে জানিয়েছেন প্রাথমিক ও গণশিক্ষা প্রতিমন্ত্রী ববি হাজ্জাজ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/education/news/662752" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/chatgpt-image-sep-12-2026-08-49-24-pm-mtyi8pjhjxyrpy8-20260912205406.jpg" alt="‘অতিমাত্রায় রাজনীতিতে শিক্ষকরা’, লাগাম টানতে হচ্ছে আচরণবিধি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">শিক্ষা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/education/news/1156514" target="_blank" rel="noopener">‘অতিমাত্রায় রাজনীতিতে শিক্ষকরা’, লাগাম টানতে হচ্ছে আচরণবিধি</a></h3>
+    <p class="card-summary">দেশের সরকারি বিদ্যালয়ের শিক্ষকরা সরাসরি রাজনীতি করতে পারেন না। তবে বিদ্যমান বেসরকারি স্কুল, কলেজ, মাদরাসা ও কারিগরি শিক্ষাপ্রতিষ্ঠানের শিক্ষক-কর্মচারীদের রাজনীতি করার সুযোগ রয়েছে। এ সুযোগ নিয়ে শিক্ষকরা শিক্ষকতার চেয়েও রা</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/education/news/1156514" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/mpo-mtyhgzoui62gnyv-20260912203234.jpg" alt="এমপিও শিক্ষকদের বদলির আবেদন ফের শুরু, মাউশির বিশেষ নির্দেশনা" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">শিক্ষা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/education/news/1156508" target="_blank" rel="noopener">এমপিও শিক্ষকদের বদলির আবেদন ফের শুরু, মাউশির বিশেষ নির্দেশনা</a></h3>
+    <p class="card-summary">দেশের বেসরকারি স্কুল-কলেজে কর্মরত এমপিওভুক্ত শিক্ষকদের বদলির আবেদন আবারও নেওয়া হচ্ছে। রোববার (১৩ সেপ্টেম্বর) পর্যন্ত এ আবেদন করা যাবে। শনিবার (১২ সেপ্টেম্বর) মাধ্যমিক ও উচ্চশিক্ষা অধিদপ্তরের (মাউশি) এক বিজ্ঞপ্তিতে এ তথ্য</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/education/news/1156508" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/app-mtygv53n3d2g2py-20260912201551.jpg" alt="শিক্ষাপ্রতিষ্ঠানের ক্লাস মনিটরিং হবে সরাসরি, চালু হচ্ছে অ্যাপ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">শিক্ষা</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/education/news/1156500" target="_blank" rel="noopener">শিক্ষাপ্রতিষ্ঠানের ক্লাস মনিটরিং হবে সরাসরি, চালু হচ্ছে অ্যাপ</a></h3>
+    <p class="card-summary">সরকারি ও বেসরকারি স্কুল, কলেজ, মাদরাসা ও কারিগরি শিক্ষাপ্রতিষ্ঠানে ক্লাস ফাঁকির অভিযোগ দীর্ঘদিনের। ক্লাসে গেলেও অনেক সময় মানসম্মত পাঠদান হয় না। ৩০ মিনিটের ক্লাস ৫ মিনিটে শেষ করেন কিছু শিক্ষক। ক্লাসে শিক্ষকদের ফাঁকি ও অবহ</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/education/news/1156500" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-9">
+          <div class="section-heading">
+            <h2>অপরাধ</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/police-head-office-882026-2609121358.jpg" alt="পুলিশের ৫ কর্মকর্তার বদলি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">অপরাধ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/law-crime/news/662749" target="_blank" rel="noopener">পুলিশের ৫ কর্মকর্তার বদলি</a></h3>
+    <p class="card-summary">বাংলাদেশ পুলিশের অতিরিক্ত পুলিশ সুপার ও সহকারী পুলিশ সুপার পদমর্যাদার পাঁচ কর্মকর্তাকে বদলি করা হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/law-crime/news/662749" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/lash-1292026-2609121019.jpg" alt="লালবাগে ভাড়া বাসার কক্ষ থেকে আইনজীবীর মরদেহ উদ্ধার" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">অপরাধ</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/law-crime/news/662718" target="_blank" rel="noopener">লালবাগে ভাড়া বাসার কক্ষ থেকে আইনজীবীর মরদেহ উদ্ধার</a></h3>
+    <p class="card-summary">রাজধানীর লালবাগে একটি ভাড়া বাসার কক্ষ থেকে আনোয়ার হোসেন নামের এক আইনজীবীর মরদেহ উদ্ধার করেছে পুলিশ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/law-crime/news/662718" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-10">
+          <div class="section-heading">
+            <h2>ক্যাম্পাস</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Nobiprobi-2609121243.jpg" alt="ছয় উদ্ভাবন নিয়ে বাংলাদেশ ইনোভেশন ফেয়ারে নোবিপ্রবি" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/campus/news/662741" target="_blank" rel="noopener">ছয় উদ্ভাবন নিয়ে বাংলাদেশ ইনোভেশন ফেয়ারে নোবিপ্রবি</a></h3>
+    <p class="card-summary">গবেষণা ও উদ্ভাবনের ভিন্নধর্মী ছয় উদ্যোগ নিয়ে বাংলাদেশ ইনোভেশন ফেয়ার-২০২৬-এ অংশ নিচ্ছে নোয়াখালী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (নোবিপ্রবি)।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/campus/news/662741" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Saddam-2609121145.jpg" alt="মৌখিক নম্বর বাড়ালে ফের আন্দোলন হবে: সাদ্দাম" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/campus/rajshahi-university/662731" target="_blank" rel="noopener">মৌখিক নম্বর বাড়ালে ফের আন্দোলন হবে: সাদ্দাম</a></h3>
+    <p class="card-summary">বাংলাদেশ ইসলামী ছাত্রশিবিরের কেন্দ্রীয় সভাপতি নুরুল ইসলাম সাদ্দাম বলেছেন, “চাকরী পরীক্ষায় মোখিক নাম্বার বাড়ানোর মাধ্যমে সরকার নিজের দলীয় লোক নিয়োগের এজেন্ডা হাতে নিয়েছে। যদি সরকার এ সিদ্ধান্ত থেকে বিরত না থাকে তাহলে আবার</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/campus/rajshahi-university/662731" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/DIU-2609121117.jpg" alt="সাংবাদিককে হত্যার হুমকি: ডিআইইউর ৬ শিক্ষার্থীর বিরুদ্ধে মামলার আবেদন" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/campus/news/662728" target="_blank" rel="noopener">সাংবাদিককে হত্যার হুমকি: ডিআইইউর ৬ শিক্ষার্থীর বিরুদ্ধে মামলার আবেদন</a></h3>
+    <p class="card-summary">ঢাকা ইন্টারন্যাশনাল ইউনিভার্সিটিতে (ডিআইইউ) তিন সাংবাদিককে হত্যার হুমকির অভিযোগের ও সাংবাদিকের ওপর হামলার ঘটনায় ছয় শিক্ষার্থীর বিরুদ্ধে মামলা করার আবেদন করেছেন ভুক্তভোগী সাংবাদিক সমিতির সাবেক সভাপতি কালাম মুহাম্মদ।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/campus/news/662728" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Rafiqul-2609121013.jpg" alt="গণভোটের রায় না মানা জনগণের সঙ্গে বিশ্বাসঘাতকতা: রফিকুল ইসলাম" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/campus/rajshahi-university/662716" target="_blank" rel="noopener">গণভোটের রায় না মানা জনগণের সঙ্গে বিশ্বাসঘাতকতা: রফিকুল ইসলাম</a></h3>
+    <p class="card-summary">জাতীয় সংসদের বিরোধীদলীয় হুইপ ও সংসদ সদস্য মাওলানা রফিকুল ইসলাম খান বলেন, “গণভোটের রায় না মানা মানে জনগণের সঙ্গে বিশ্বাসঘাতকতা। গণভোটের রায় বাতিলের নানা উদ্যোগের মাধ্যমে দেশকে আবার স্বৈরাচার ও ফ্যাসিবাদের দিকে নেওয়ার চেষ্</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/campus/rajshahi-university/662716" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/ducc-mtyjzwrp4hcsh5a-20260912214616.jpg" alt="ঢাবি দাবা ক্লাবের ট্যালেন্ট হান্টে ৮০ প্রতিযোগী, চ্যাম্পিয়ন আকিব হাসান" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/campus/news/1156524" target="_blank" rel="noopener">ঢাবি দাবা ক্লাবের ট্যালেন্ট হান্টে ৮০ প্রতিযোগী, চ্যাম্পিয়ন আকিব হাসান</a></h3>
+    <p class="card-summary">ঢাকা বিশ্ববিদ্যালয় দাবা ক্লাবের আয়োজনে অনুষ্ঠিত ‘ডিইউসিসি ট্যালেন্ট হান্ট অ্যান্ড ফ্রেশার রিসেপশন ২০২৬’ দাবা প্রতিযোগিতায় চ্যাম্পিয়ন হয়েছেন আকিব হাসান। রানারআপ হয়েছেন মো. মারুফ এবং দ্বিতীয় রানারআপ হয়েছেন আল মোহাইমিন সাদি</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/campus/news/1156524" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.jagonews24.com/media/imgAllNew/BG/2023March/jagonewsimage-1-mtygip0j8lyqq9p-20260912200844.jpg" alt="ডাকসুর সেমিনারে ৫০০ শিক্ষার্থীকে আত্মরক্ষা, ফিটনেস ও ডায়েট প্রশিক্ষণ" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">ক্যাম্পাস</span>
+    <h3 class="card-title"><a href="https://www.jagonews24.com/campus/news/1156497" target="_blank" rel="noopener">ডাকসুর সেমিনারে ৫০০ শিক্ষার্থীকে আত্মরক্ষা, ফিটনেস ও ডায়েট প্রশিক্ষণ</a></h3>
+    <p class="card-summary">শিক্ষার্থীদের শারীরিক সক্ষমতা বৃদ্ধি, স্বাস্থ্যকর জীবনযাপন ও ব্যক্তিগত নিরাপত্তা বিষয়ে সচেতন করতে ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় ছাত্র সংসদের (ডাকসু) উদ্যোগে ‘সেলফ ডিফেন্স, ফিটনেস অ্যান্ড ডায়েট’ বিষয়ক সেমিনার অনুষ্ঠিত হয়েছ</p>
+    <div class="card-meta">
+      <span class="card-source">jagonews24.com</span>
+      <a class="card-readmore" href="https://www.jagonews24.com/campus/news/1156497" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+        <section class="category-section" id="cat-11">
+          <div class="section-heading">
+            <h2>স্বাস্থ্য</h2>
+            <span class="section-rule"></span>
+          </div>
+          <div class="card-grid">
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/dengu-1162025-2609121211.jpg" alt="ডেঙ্গুতে ২ জনের মৃত্যু, হাসপাতালে ভর্তি ১০৫৬" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">স্বাস্থ্য</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/health/news/662738" target="_blank" rel="noopener">ডেঙ্গুতে ২ জনের মৃত্যু, হাসপাতালে ভর্তি ১০৫৬</a></h3>
+    <p class="card-summary">এডিস মশাবাহিত রোগ ডেঙ্গুতে আক্রান্ত হয়ে গত ২৪ ঘণ্টায় দেশে আরো ২ জনের মৃত্যু হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/health/news/662738" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/hum-1882026-2609121002.jpg" alt="হাম উপসর্গে আরো ৭ শিশুর মৃত্যু" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">স্বাস্থ্য</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/health/news/662715" target="_blank" rel="noopener">হাম উপসর্গে আরো ৭ শিশুর মৃত্যু</a></h3>
+    <p class="card-summary">দেশে গত ২৪ ঘণ্টায় হাম উপসর্গ নিয়ে আরো ৭ শিশুর মৃত্যু হয়েছে।</p>
+    <div class="card-meta">
+      <span class="card-source">risingbd.com</span>
+      <a class="card-readmore" href="https://www.risingbd.com/health/news/662715" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+    </div>
+  </div>
+</article>
+</div>
+        </section>
+        
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p><strong>BIJOY NEWS 24</strong> একটি স্বয়ংক্রিয় নিউজ অ্যাগ্রিগেটর — খবরের সংক্ষিপ্ত ব্রিফ AI দিয়ে নিজস্ব ভাষায় লেখা, পুরো খবর পড়তে মূল সংবাদমাধ্যমের লিংকে যান।</p>
+      <p>খবরের সূত্র: jagonews24.com, risingbd.com</p>
+    </div>
+  </footer>
+
+</body>
+</html>
