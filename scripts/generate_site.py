@@ -150,7 +150,6 @@ def source_name_from_url(url: str) -> str:
     m = re.search(r"https?://(?:www\.)?([^/]+)", url)
     if m:
         domain = m.group(1)
-        # সুন্দর নাম দেখানোর জন্য
         parts = domain.split(".")
         if len(parts) >= 2:
             return parts[-2].upper()
@@ -169,7 +168,6 @@ def collect_all_items():
         except Exception as exc:
             print(f"✘ ফিড ব্যর্থ ({feed_url}): {exc}", file=sys.stderr)
             
-    # ডুপ্লিকেট লিংক বাদ দেওয়া এবং লেটেস্ট সাজানো
     seen = set()
     unique_items = []
     for it in all_items:
@@ -408,11 +406,11 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .ticker-bar {{ background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; }}
   .ticker-bar .ticker-label {{
     position: absolute; top: 0; bottom: 0; right: 0; background: var(--black); color: #FFFFFF;
-    padding: 8px 18px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; z-index: 2;
+    padding: 8px 18px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 2;
   }}
-  .ticker-label .dot {{ width: 8px; height: 8px; border-radius: 50%; background: var(--red); }}
-  .ticker-track {{ display: inline-block; padding: 9px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }}
-  .ticker-track a {{ margin-right: 42px; font-size: 0.9rem; color: #FFFFFF; }}
+  .ticker-label .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; }}
+  .ticker-track {{ display: inline-block; padding: 10px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }}
+  .ticker-track a {{ margin-right: 42px; font-size: 0.98rem; font-weight: 600; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }}
   @keyframes scroll-ticker {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-50%); }} }}
 
   .category-nav {{
@@ -502,7 +500,8 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     {sections_html}
   </main>
 
-  <footer>
+  footer {{ background: var(--black); color: rgba(255,255,255,0.7); padding: 26px 20px 44px; font-size: 0.85rem; border-top: 3px solid var(--red); }}
+  <footer class="footer-inner">
     <div class="footer-inner">
       <p><strong>{site_name}</strong> একটি স্বয়ংক্রিয় মাল্টি-সোর্স নিউজ পোর্টাল — খবরের বিস্তারিত বিবরণী এআই দিয়ে জেনারেট করা।</p>
       <p>সংবাদ সূত্রসমূহ: {sources_credit}</p>
