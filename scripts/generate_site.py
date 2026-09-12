@@ -403,15 +403,32 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .masthead .brand p {{ margin: 6px 0 0; color: rgba(255,255,255,0.6); font-size: 0.92rem; font-weight: 600; }}
   .masthead .updated {{ font-size: 0.85rem; color: rgba(255,255,255,0.55); text-align: right; }}
 
-  .ticker-bar {{ background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; }}
+  .ticker-bar {{ background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; height: 42px; display: flex; align-items: center; }}
   .ticker-bar .ticker-label {{
     position: absolute; top: 0; bottom: 0; right: 0; background: var(--black); color: #FFFFFF;
-    padding: 8px 18px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 2;
+    padding: 0 18px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 2;
+    box-shadow: -5px 0 10px rgba(0,0,0,0.3);
   }}
   .ticker-label .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; }}
-  .ticker-track {{ display: inline-block; padding: 10px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }}
-  .ticker-track a {{ margin-right: 42px; font-size: 0.98rem; font-weight: 600; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }}
-  @keyframes scroll-ticker {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-50%); }} }}
+  .ticker-track {{
+    display: inline-block;
+    white-space: nowrap;
+    will-change: transform;
+    animation: scroll-ticker 35s linear infinite;
+    -webkit-font-smoothing: antialiased;
+  }}
+  .ticker-track a {{
+    margin-right: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6), -1px -1px 2px rgba(0,0,0,0.3);
+    display: inline-block;
+  }}
+  @keyframes scroll-ticker {{
+    0% {{ transform: translate3d(0, 0, 0); }}
+    100% {{ transform: translate3d(-50%, 0, 0); }}
+  }}
 
   .category-nav {{
     max-width: 1160px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 24px;
@@ -500,8 +517,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     {sections_html}
   </main>
 
-  footer {{ background: var(--black); color: rgba(255,255,255,0.7); padding: 26px 20px 44px; font-size: 0.85rem; border-top: 3px solid var(--red); }}
-  <footer class="footer-inner">
+  <footer>
     <div class="footer-inner">
       <p><strong>{site_name}</strong> একটি স্বয়ংক্রিয় মাল্টি-সোর্স নিউজ পোর্টাল — খবরের বিস্তারিত বিবরণী এআই দিয়ে জেনারেট করা।</p>
       <p>সংবাদ সূত্রসমূহ: {sources_credit}</p>
@@ -526,5 +542,5 @@ def main():
     print(f"✅ সফল! সাইট তৈরি সম্পন্ন: {out_path} ({len(items)}টি নিউজ সহ)")
 
 
-if __name__ == "__main__":
+if __name__ == "__main`":
     main()
