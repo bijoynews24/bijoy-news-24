@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-বাংলা নিউজ পোর্টাল - অটোমেটিক সাইট জেনারেটর
-=================================================
-এই স্ক্রিপ্টটি কিছু পাবলিক RSS ফিড থেকে খবর সংগ্রহ করে,
-docs/index.html নামে একটা প্রফেশনাল-লুকিং নিউজ পোর্টাল পেজ তৈরি করে।
-
-কোনো তৃতীয়-পক্ষ লাইব্রেরি লাগে না (শুধু Python-এর built-in মডিউল),
-তাই GitHub Actions-এ `pip install` ছাড়াই চলে।
-
-⚠️ গুরুত্বপূর্ণ: এই স্ক্রিপ্ট শুধু হেডলাইন + ছোট সারাংশ + মূল লিংক নেয়,
-   পুরো আর্টিকেল কপি করে না (কপিরাইট মেনে চলার জন্য)।
+বাংলা নিউজ পোর্টাল - অটোমেটিক সাইট জেনারেটর (মাল্টি-সোর্স ও এআই ফুল ব্রিফ সহ)
+========================================================================
+এই স্ক্রিপ্টটি বাংলাদেশের একাধিক শীর্ষস্থানীয় সংবাদমাধ্যমের RSS ফিড থেকে 
+খবর সংগ্রহ করে, জেমিনি এআই দিয়ে সেগুলোকে নিজস্ব ভাষায় বিস্তারিত ব্রিফে 
+রূপান্তর করে এবং docs/index.html নামে একটি প্রফেশনাল নিউজ পোর্টাল তৈরি করে।
 """
 
 import html
@@ -25,19 +20,25 @@ from datetime import datetime, timezone, timedelta
 from xml.etree import ElementTree as ET
 
 # ---------------------------------------------------------------------------
-# ১. কনফিগারেশন — এখানে সাইটের নাম ও নিউজ সোর্স বদলাতে পারবে
+# ১. কনফিগারেশন — একাধিক জনপ্রিয় নিউজ সোর্স ও সাইট সেটিংস
 # ---------------------------------------------------------------------------
 
 SITE_NAME = "BIJOY NEWS 24"
 SITE_TAGLINE = "সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ"
 
-# একাধিক সোর্স দেওয়া হলো রিডানডেন্সির জন্য — একটা ফেইল করলে বাকিগুলো কাজ করবে।
+# বাংলাদেশের শীর্ষস্থানীয় ও জনপ্রিয় সংবাদমাধ্যমের RSS ফিড লিস্ট
 FEEDS = [
-    "https://risingbd.com/rss/rss.xml",
+    "https://www.prothomalo.com/arc/outboundfeed/?outputType=xml",
     "https://www.jagonews24.com/rss/rss.xml",
+    "https://risingbd.com/rss/rss.xml",
+    "https://www.kalerkantho.com/rss.xml",
+    "https://www.jugantor.com/rss.xml",
+    "https://www.samakal.com/rss.xml",
+    "https://bangla.bdnews24.com/?_format=rss",
+    "https://www.thedailystar.net/bangla/rss.xml",
 ]
 
-# RSS লিংকের URL অংশ দেখে ক্যাটাগরি বের করার ম্যাপ (risingbd স্টাইল)
+# ক্যাটাগরি ম্যাপিং
 CATEGORY_MAP = {
     "national": "জাতীয়",
     "bangladesh": "বাংলাদেশ",
@@ -46,35 +47,26 @@ CATEGORY_MAP = {
     "sports": "খেলাধুলা",
     "entertainment": "বিনোদন",
     "economics": "অর্থনীতি",
+    "business": "ব্যবসা",
     "lifestyle": "লাইফস্টাইল",
-    "campus": "ক্যাম্পাস",
-    "health": "স্বাস্থ্য",
-    "law-crime": "অপরাধ",
-    "media": "মিডিয়া",
-    "feature": "ফিচার",
     "opinion": "মতামত",
-    "art-literature": "শিল্প-সাহিত্য",
-    "risingbd-special": "বিশেষ প্রতিবেদন",
     "technology": "প্রযুক্তি",
     "education": "শিক্ষা",
+    "crime": "অপরাধ",
 }
 DEFAULT_CATEGORY = "সর্বশেষ"
 
-MAX_ITEMS_PER_FEED = 60
+MAX_ITEMS_PER_FEED = 30
 MAX_HERO_ITEMS = 3
 MAX_PER_CATEGORY = 8
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
 
-# --- AI রি-রাইট কনফিগারেশন (সম্পূর্ণ ফ্রি — Google Gemini free tier) -------
-# GEMINI_API_KEY একটা GitHub Actions "secret" হিসেবে সেট করতে হবে
-# (README.md-এ ধাপগুলো লেখা আছে)। Google AI Studio থেকে বিনামূল্যে এই key
-# পাওয়া যায় — কোনো কার্ড বা বিলিং লাগে না। key না থাকলে স্ক্রিপ্ট এমনিতেই
-# মূল সারাংশ ব্যবহার করবে, ভেঙে পড়বে না।
+# --- AI কনফিগারেশন (Google Gemini) ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-AI_MODEL = "gemini-2.5-flash"            # Gemini-এর স্থায়ী ফ্রি-টায়ার মডেল
-MAX_AI_REWRITES_PER_RUN = 20             # ফ্রি টায়ারের রেট-লিমিট (প্রতি মিনিটে ~১০টা রিকোয়েস্ট) মাথায় রেখে
+AI_MODEL = "gemini-2.5-flash"
+MAX_AI_REWRITES_PER_RUN = 30             
 AI_TIMEOUT = 20
-AI_PACE_DELAY_SEC = 6.5                  # প্রতি কলের মাঝে বিরতি, রেট-লিমিটে যেন না লাগে
+AI_PACE_DELAY_SEC = 4.5                  
 AI_RETRY_DELAY_SEC = 8
 
 BD_TZ = timezone(timedelta(hours=6))
@@ -106,7 +98,6 @@ def strip_html(text: str) -> str:
 
 
 def find_image(item_el) -> str:
-    ns = {"media": "http://search.yahoo.com/mrss/"}
     for tag in ("{http://search.yahoo.com/mrss/}content", "{http://search.yahoo.com/mrss/}thumbnail"):
         el = item_el.find(tag)
         if el is not None and el.get("url"):
@@ -146,7 +137,7 @@ def parse_rss_bytes(raw: bytes, source_name: str):
         items.append({
             "title": title,
             "link": link,
-            "summary": description[:220],
+            "summary": description[:350],
             "image": image,
             "category": guess_category_from_link(link),
             "source": source_name,
@@ -157,7 +148,14 @@ def parse_rss_bytes(raw: bytes, source_name: str):
 
 def source_name_from_url(url: str) -> str:
     m = re.search(r"https?://(?:www\.)?([^/]+)", url)
-    return m.group(1) if m else url
+    if m:
+        domain = m.group(1)
+        # সুন্দর নাম দেখানোর জন্য
+        parts = domain.split(".")
+        if len(parts) >= 2:
+            return parts[-2].upper()
+        return domain.upper()
+    return url
 
 
 def collect_all_items():
@@ -167,10 +165,11 @@ def collect_all_items():
             raw = fetch_feed_bytes(feed_url)
             src = source_name_from_url(feed_url)
             all_items.extend(parse_rss_bytes(raw, src))
-            print(f"✔ ফিড সংগ্রহ সম্পন্ন: {feed_url} ({len(all_items)} সহ)")
+            print(f"✔ ফিড সংগ্রহ সফল: {feed_url}")
         except Exception as exc:
-            print(f"✘ ফিড ব্যর্থ হয়েছে ({feed_url}): {exc}", file=sys.stderr)
-    # ডুপ্লিকেট লিংক বাদ দেওয়া
+            print(f"✘ ফিড ব্যর্থ ({feed_url}): {exc}", file=sys.stderr)
+            
+    # ডুপ্লিকেট লিংক বাদ দেওয়া এবং লেটেস্ট সাজানো
     seen = set()
     unique_items = []
     for it in all_items:
@@ -182,32 +181,26 @@ def collect_all_items():
 
 
 # ---------------------------------------------------------------------------
-# ৩. AI দিয়ে নিজস্ব ভাষায় ব্রিফ লেখা (ঐচ্ছিক — API key থাকলে চলবে)
+# ৩. AI দিয়ে বিস্তারিত নিউজ ব্রিফ তৈরি করা
 # ---------------------------------------------------------------------------
 
 def ai_rewrite_brief(title: str, summary: str) -> str:
-    """RSS-এর ছোট সারাংশ থেকে ৪-৫ লাইনের একটা নিজস্ব ভাষায় লেখা নিউজ ব্রিফ
-    বানায় (Google Gemini-এর ফ্রি টায়ার দিয়ে)। মূল আর্টিকেলের বাক্য/স্ট্রাকচার
-    কপি করে না — শুধু তথ্যটা ভিত্তি ধরে নতুন করে লেখে। key না থাকলে বা
-    ব্যর্থ হলে মূল সারাংশ ফেরত দেয়, স্ক্রিপ্ট কখনো ভেঙে পড়ে না।
-    """
     if not GEMINI_API_KEY:
         return summary
 
     prompt = (
-        "তুমি একজন বাংলা নিউজ এডিটর। নিচের হেডলাইন ও সংক্ষিপ্ত তথ্যের "
-        "ভিত্তিতে ৪-৫ লাইনের একটা সহজ, স্বাভাবিক বাংলায় নিউজ ব্রিফ লেখো। "
-        "সম্পূর্ণ নিজের ভাষায় লিখবে, দেওয়া বাক্যগুলো হুবহু কপি করবে না, "
-        "নতুন কোনো তথ্য বানিয়ে বলবে না, শুধু ভাষা ও গঠন নতুন করে সাজাবে। "
-        "শুধু ব্রিফের টেক্সট ফেরত দাও, আর কিছু না।\n\n"
+        "তুমি একজন প্রফেশনাল বাংলা নিউজ এডিটর। নিচের হেডলাইন ও মূল তথ্যের "
+        "ভিত্তিতে ৫-৬ লাইনের একটি আকর্ষণীয়, বিস্তারিত ও তথ্যবহুল নিউজ ব্রিফ বা প্রতিবেদন তৈরি করো। "
+        "ভাষা একদম সাবলীল ও স্বাভাবিক বাংলা হবে। হুবহু কপি না করে নিজের মতো করে সুন্দরভাবে গুছিয়ে লিখবে। "
+        "শুধুমাত্র নিউজের টেক্সট টুকু রিটার্ন করবে, অন্য কোনো অতিরিক্ত কথা বলবে না।\n\n"
         f"হেডলাইন: {title}\n"
-        f"তথ্য: {summary}"
+        f"মূল তথ্য: {summary}"
     )
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{AI_MODEL}:generateContent"
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"maxOutputTokens": 300, "temperature": 0.4},
+        "generationConfig": {"maxOutputTokens": 400, "temperature": 0.5},
     }).encode("utf-8")
 
     req = urllib.request.Request(
@@ -234,17 +227,15 @@ def ai_rewrite_brief(title: str, summary: str) -> str:
             if exc.code == 429 and attempt == 0:
                 time.sleep(AI_RETRY_DELAY_SEC)
                 continue
-            print(f"⚠ AI রি-রাইট ব্যর্থ ({exc.code}), মূল সারাংশ ব্যবহার হচ্ছে", file=sys.stderr)
             return summary
-        except Exception as exc:
-            print(f"⚠ AI রি-রাইট ব্যর্থ ({exc}), মূল সারাংশ ব্যবহার হচ্ছে", file=sys.stderr)
+        except Exception:
             return summary
     return summary
 
 
 def apply_ai_rewrites(items):
     if not GEMINI_API_KEY:
-        print("ℹ️  GEMINI_API_KEY সেট করা নেই — AI রি-রাইট ছাড়াই মূল সারাংশ ব্যবহার হচ্ছে।")
+        print("ℹ️  GEMINI_API_KEY সেট করা নেই — ডিফল্ট সারাংশ ব্যবহার হচ্ছে।")
         return items
     count = 0
     for it in items:
@@ -252,13 +243,13 @@ def apply_ai_rewrites(items):
             break
         it["summary"] = ai_rewrite_brief(it["title"], it["summary"])
         count += 1
-        time.sleep(AI_PACE_DELAY_SEC)   # ফ্রি টায়ারের প্রতি-মিনিট রেট-লিমিট সম্মান করে চলার জন্য
-    print(f"✅ AI দিয়ে {count}টি ব্রিফ রি-রাইট করা হয়েছে (ফ্রি Gemini টায়ার)")
+        time.sleep(AI_PACE_DELAY_SEC)
+    print(f"✅ AI দিয়ে সফলভাবে {count}টি খবরের বিস্তারিত ব্রিফ জেনারেট করা হয়েছে।")
     return items
 
 
 # ---------------------------------------------------------------------------
-# ৪. HTML তৈরি করা
+# ৪. HTML টেমপ্লেট ও ডিজাইন জেনারেশন
 # ---------------------------------------------------------------------------
 
 CARD_TEMPLATE = """
@@ -269,8 +260,8 @@ CARD_TEMPLATE = """
     <h3 class="card-title"><a href="{link}" target="_blank" rel="noopener">{title}</a></h3>
     <p class="card-summary">{summary}</p>
     <div class="card-meta">
-      <span class="card-source">{source}</span>
-      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+      <span class="card-source">সোর্স: {source}</span>
+      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
     </div>
   </div>
 </article>
@@ -284,8 +275,8 @@ HERO_TEMPLATE = """
     <h2 class="hero-title"><a href="{link}" target="_blank" rel="noopener">{title}</a></h2>
     <p class="hero-summary">{summary}</p>
     <div class="card-meta">
-      <span class="card-source">{source}</span>
-      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">মূল খবর পড়ুন →</a>
+      <span class="card-source">সোর্স: {source}</span>
+      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
     </div>
   </div>
 </article>
@@ -313,7 +304,7 @@ def render_card(item, template=CARD_TEMPLATE, extra_class=""):
 
 def build_html(items):
     if not items:
-        raise SystemExit("কোনো খবর পাওয়া যায়নি — সব ফিড ব্যর্থ হয়েছে।")
+        raise SystemExit("কোনো খবর পাওয়া যায়নি।")
 
     now_bd = datetime.now(BD_TZ)
     updated_str = now_bd.strftime("%d %B %Y, %I:%M %p")
@@ -321,12 +312,11 @@ def build_html(items):
     hero_items = items[:MAX_HERO_ITEMS]
     rest_items = items[MAX_HERO_ITEMS:]
 
-    # ক্যাটাগরি অনুযায়ী ভাগ করা, insertion অর্ডার বজায় রেখে
     by_category = {}
     for it in rest_items:
         by_category.setdefault(it["category"], []).append(it)
 
-    ticker_items = items[:10]
+    ticker_items = items[:12]
     ticker_html = "".join(
         f'<a href="{html.escape(it["link"])}" target="_blank" rel="noopener">{html.escape(it["title"])}</a>'
         for it in ticker_items
@@ -389,285 +379,100 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     --black: #0C0B0E;
     --red: #E4102B;
     --red-deep: #B80C22;
-    --silver: #D7DADF;
-    --card-bg: #FFFFFF;
     --hairline: #E8E6E9;
     --glow: rgba(228, 16, 43, 0.25);
   }}
   * {{ box-sizing: border-box; }}
   html {{ scroll-behavior: smooth; }}
   body {{
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Hind Siliguri', sans-serif;
-    line-height: 1.6;
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Hind Siliguri', sans-serif; line-height: 1.6;
   }}
   a {{ color: inherit; text-decoration: none; }}
   h1, h2, h3 {{ font-family: 'Noto Serif Bengali', serif; margin: 0; }}
 
-  /* ---------- মাস্টহেড: কালো + উজ্জ্বল লাল + সোনালি — এলিট এডিটোরিয়াল লুক ---------- */
-  .masthead {{
-    background: var(--black);
-    position: relative;
-    overflow: hidden;
-    border-bottom: 3px solid var(--red);
-  }}
-  .masthead::before {{
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(100deg, transparent 0%, rgba(228,16,43,0.18) 45%, transparent 70%);
-    background-size: 220% 100%;
-    animation: sheen-sweep 7s ease-in-out infinite;
-  }}
-  @keyframes sheen-sweep {{
-    0% {{ background-position: 200% 0; }}
-    100% {{ background-position: -20% 0; }}
-  }}
-  .masthead::after {{
-    content: "";
-    position: absolute; inset: 0;
-    background: radial-gradient(520px 200px at 85% 0%, rgba(255,255,255,0.06), transparent 70%);
-  }}
+  .masthead {{ background: var(--black); border-bottom: 3px solid var(--red); }}
   .masthead-inner {{
-    max-width: 1160px;
-    margin: 0 auto;
-    padding: 26px 20px 22px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
-    position: relative;
+    max-width: 1160px; margin: 0 auto; padding: 26px 20px 22px;
+    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;
   }}
   .brand {{ display: flex; align-items: center; gap: 14px; }}
-  .brand .accent-bar {{
-    width: 6px;
-    align-self: stretch;
-    background: linear-gradient(var(--red), var(--red-deep));
-    border-radius: 2px;
-  }}
+  .brand .accent-bar {{ width: 6px; align-self: stretch; background: var(--red); border-radius: 2px; }}
   .masthead .brand h1 {{
-    font-family: 'Anton', 'Arial Black', 'Impact', 'Hind Siliguri', sans-serif;
-    font-size: clamp(2.2rem, 6vw, 3.5rem);
-    font-weight: 400;
-    letter-spacing: 1.5px;
-    color: #FFFFFF;
-    text-shadow: 0 0 22px rgba(228,16,43,0.4), 0 2px 2px rgba(0,0,0,0.5);
-    line-height: 1;
+    font-family: 'Anton', sans-serif; font-size: clamp(2.2rem, 6vw, 3.5rem);
+    color: #FFFFFF; letter-spacing: 1.5px; line-height: 1;
   }}
-  .masthead .brand p {{
-    margin: 6px 0 0;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.92rem;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }}
-  .masthead .updated {{
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.55);
-    text-align: right;
-  }}
-  @media (prefers-reduced-motion: reduce) {{
-    .masthead::before {{ animation: none; }}
-  }}
+  .masthead .brand p {{ margin: 6px 0 0; color: rgba(255,255,255,0.6); font-size: 0.92rem; font-weight: 600; }}
+  .masthead .updated {{ font-size: 0.85rem; color: rgba(255,255,255,0.55); text-align: right; }}
 
-  /* ---------- ব্রেকিং টিকার ---------- */
-  .ticker-bar {{
-    background: var(--red);
-    color: #fff;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-  }}
+  .ticker-bar {{ background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; }}
   .ticker-bar .ticker-label {{
-    position: absolute;
-    top: 0; bottom: 0; right: 0;
-    background: var(--black);
-    color: #FFFFFF;
-    padding: 8px 18px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    z-index: 2;
-    box-shadow: -14px 0 18px -6px rgba(0,0,0,0.35);
+    position: absolute; top: 0; bottom: 0; right: 0; background: var(--black); color: #FFFFFF;
+    padding: 8px 18px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; z-index: 2;
   }}
-  .ticker-label .dot {{
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--red);
-    animation: pulse-dot 1.4s ease-in-out infinite;
-  }}
-  @keyframes pulse-dot {{
-    0%, 100% {{ opacity: 1; transform: scale(1); }}
-    50% {{ opacity: 0.35; transform: scale(0.7); }}
-  }}
-  .ticker-track {{
-    display: inline-block;
-    padding: 9px 0;
-    padding-right: 150px;
-    animation: scroll-ticker 55s linear infinite;
-  }}
-  .ticker-track a {{
-    margin-right: 42px;
-    font-size: 0.9rem;
-    color: #FFFFFF;
-  }}
-  .ticker-track a:hover {{ color: var(--black); }}
-  @keyframes scroll-ticker {{
-    from {{ transform: translateX(0); }}
-    to {{ transform: translateX(-50%); }}
-  }}
-  @media (prefers-reduced-motion: reduce) {{
-    .ticker-track {{ animation: none; overflow-x: auto; }}
-    .ticker-label .dot {{ animation: none; }}
-  }}
+  .ticker-label .dot {{ width: 8px; height: 8px; border-radius: 50%; background: var(--red); }}
+  .ticker-track {{ display: inline-block; padding: 9px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }}
+  .ticker-track a {{ margin-right: 42px; font-size: 0.9rem; color: #FFFFFF; }}
+  @keyframes scroll-ticker {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-50%); }} }}
 
-  /* ---------- ক্যাটাগরি নেভ ---------- */
   .category-nav {{
-    max-width: 1160px;
-    margin: 0 auto;
-    padding: 12px 20px;
-    display: flex;
-    gap: 24px;
-    overflow-x: auto;
-    border-bottom: 1px solid var(--hairline);
-    font-size: 0.92rem;
-    font-weight: 700;
+    max-width: 1160px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 24px;
+    overflow-x: auto; border-bottom: 1px solid var(--hairline); font-size: 0.92rem; font-weight: 700;
   }}
-  .category-nav a {{
-    white-space: nowrap;
-    color: var(--ink);
-    position: relative;
-    padding-bottom: 4px;
-  }}
-  .category-nav a::after {{
-    content: "";
-    position: absolute; left: 0; right: 100%; bottom: 0;
-    height: 2px; background: var(--red);
-    transition: right 0.25s ease;
-  }}
+  .category-nav a {{ white-space: nowrap; color: var(--ink); }}
   .category-nav a:hover {{ color: var(--red); }}
-  .category-nav a:hover::after {{ right: 0; }}
 
   main {{ max-width: 1160px; margin: 0 auto; padding: 30px 20px 60px; }}
 
-  /* ---------- হিরো গ্রিড ---------- */
-  .hero-grid {{
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 24px;
-    margin-bottom: 50px;
-  }}
+  .hero-grid {{ display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-bottom: 50px; }}
   .hero-lead {{ grid-row: span 2; }}
-  @media (max-width: 800px) {{
-    .hero-grid {{ grid-template-columns: 1fr; }}
-    .hero-lead {{ grid-row: auto; }}
-  }}
+  @media (max-width: 800px) {{ .hero-grid {{ grid-template-columns: 1fr; }} .hero-lead {{ grid-row: auto; }} }}
 
   .hero-card, .card {{
-    background: var(--card-bg);
-    border: 1px solid var(--hairline);
-    border-top: 3px solid transparent;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    background: var(--card-bg, #FFF); border: 1px solid var(--hairline); border-top: 3px solid transparent;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease; display: flex; flex-direction: column;
   }}
   .hero-card:hover, .card:hover {{
-    transform: translateY(-5px);
-    box-shadow: 0 18px 36px -18px var(--glow), 0 4px 10px -6px rgba(0,0,0,0.08);
-    border-top-color: var(--red);
+    transform: translateY(-5px); box-shadow: 0 18px 36px -18px var(--glow); border-top-color: var(--red);
   }}
-  .hero-card .card-img img, .card .card-img img {{
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform 0.4s ease;
-  }}
-  .hero-card:hover .card-img img, .card:hover .card-img img {{ transform: scale(1.04); }}
-  .hero-lead .card-img {{ aspect-ratio: 16/10; position: relative; overflow: hidden; }}
-  .hero-lead .card-img::after {{
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(12,11,14,0.6), transparent 55%);
-  }}
-  .hero-secondary {{ display: flex; }}
+  .card-img img {{ width: 100%; height: 100%; object-fit: cover; display: block; }}
+  .hero-lead .card-img {{ aspect-ratio: 16/10; overflow: hidden; }}
+  .hero-secondary {{ display: flex; flex-direction: row; }}
   .hero-secondary .card-img {{ width: 40%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }}
   .hero-secondary .hero-body {{ flex: 1; }}
-  .card-img.placeholder {{
-    background: linear-gradient(135deg, var(--red), var(--black));
-    aspect-ratio: 16/10;
-  }}
+  .card-img.placeholder {{ background: linear-gradient(135deg, var(--red), var(--black)); aspect-ratio: 16/10; }}
 
   .card-cat {{
-    display: inline-block;
-    background: var(--red);
-    color: #FFFFFF;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 2px;
-    margin-bottom: 8px;
-    letter-spacing: 0.4px;
+    display: inline-block; background: var(--red); color: #FFFFFF; font-size: 0.72rem;
+    font-weight: 700; padding: 3px 10px; border-radius: 2px; margin-bottom: 8px;
   }}
-  .hero-body, .card-body {{ padding: 18px 20px 20px; }}
-  .hero-lead .hero-title {{ font-size: clamp(1.5rem, 3vw, 2.15rem); line-height: 1.32; }}
-  .hero-secondary .hero-title {{ font-size: 1.05rem; }}
+  .hero-body, .card-body {{ padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }}
+  .hero-lead .hero-title {{ font-size: clamp(1.4rem, 2.5vw, 2rem); line-height: 1.32; }}
+  .hero-secondary .hero-title {{ font-size: 1rem; }}
   .hero-title a:hover, .card-title a:hover {{ color: var(--red); }}
-  .hero-summary {{ color: var(--ink-soft); margin: 10px 0 0; font-size: 0.95rem; }}
+  .hero-summary, .card-summary {{ color: var(--ink-soft); margin: 10px 0 15px; font-size: 0.9rem; flex: 1; }}
   .hero-secondary .hero-summary {{ display: none; }}
 
-  .card-grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 22px;
-  }}
+  .card-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }}
   .card-title {{ font-size: 1.05rem; line-height: 1.4; margin-top: 2px; }}
-  .card-summary {{ color: var(--ink-soft); font-size: 0.88rem; margin: 8px 0 0; }}
   .card-img {{ aspect-ratio: 16/10; overflow: hidden; }}
 
   .card-meta {{
-    margin-top: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-    border-top: 1px solid var(--hairline);
-    padding-top: 10px;
+    margin-top: auto; display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.78rem; color: var(--ink-soft); border-top: 1px solid var(--hairline); padding-top: 10px;
   }}
   .card-readmore {{ color: var(--red); font-weight: 700; }}
 
-  .section-heading {{
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 50px 0 22px;
-  }}
-  .section-heading h2 {{
-    font-size: 1.55rem;
-    color: var(--ink);
-    white-space: nowrap;
-    position: relative;
-    padding-left: 16px;
-  }}
+  .section-heading {{ display: flex; align-items: center; gap: 14px; margin: 50px 0 22px; }}
+  .section-heading h2 {{ font-size: 1.55rem; color: var(--ink); white-space: nowrap; position: relative; padding-left: 16px; }}
   .section-heading h2::before {{
-    content: "";
-    position: absolute; left: 0; top: 6px; bottom: 6px; width: 5px;
-    background: linear-gradient(var(--red), var(--red-deep));
+    content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 5px; background: var(--red);
   }}
   .section-rule {{ flex: 1; height: 1px; background: var(--hairline); }}
-  .category-section:first-of-type .section-heading {{ margin-top: 0; }}
 
-  footer {{
-    background: var(--black);
-    color: rgba(255,255,255,0.7);
-    padding: 26px 20px 44px;
-    font-size: 0.85rem;
-    border-top: 3px solid var(--red);
-  }}
+  footer {{ background: var(--black); color: rgba(255,255,255,0.7); padding: 26px 20px 44px; font-size: 0.85rem; border-top: 3px solid var(--red); }}
   footer .footer-inner {{ max-width: 1160px; margin: 0 auto; }}
   footer strong {{ color: #FFFFFF; }}
-
-  :focus-visible {{ outline: 2px solid var(--red); outline-offset: 2px; }}
 </style>
 </head>
 <body>
@@ -699,8 +504,8 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <footer>
     <div class="footer-inner">
-      <p><strong>{site_name}</strong> একটি স্বয়ংক্রিয় নিউজ অ্যাগ্রিগেটর — খবরের সংক্ষিপ্ত ব্রিফ AI দিয়ে নিজস্ব ভাষায় লেখা, পুরো খবর পড়তে মূল সংবাদমাধ্যমের লিংকে যান।</p>
-      <p>খবরের সূত্র: {sources_credit}</p>
+      <p><strong>{site_name}</strong> একটি স্বয়ংক্রিয় মাল্টি-সোর্স নিউজ পোর্টাল — খবরের বিস্তারিত বিবরণী এআই দিয়ে জেনারেট করা।</p>
+      <p>সংবাদ সূত্রসমূহ: {sources_credit}</p>
     </div>
   </footer>
 
@@ -710,14 +515,16 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 
 
 def main():
+    print("🔄 একাধিক নিউজ সোর্স থেকে খবর সংগ্রহ করা হচ্ছে...")
     items = collect_all_items()
+    print(f"🤖 মোট {len(items)}টি অনন্য খবর পাওয়া গেছে। এআই প্রসেসিং শুরু হচ্ছে...")
     items = apply_ai_rewrites(items)
     page = build_html(items)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     out_path = os.path.join(OUTPUT_DIR, "index.html")
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(page)
-    print(f"✅ সাইট তৈরি সম্পন্ন: {out_path} ({len(items)}টি খবর)")
+    print(f"✅ সফল! সাইট তৈরি সম্পন্ন: {out_path} ({len(items)}টি নিউজ সহ)")
 
 
 if __name__ == "__main__":
