@@ -45,11 +45,11 @@
   .ticker-bar { background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; }
   .ticker-bar .ticker-label {
     position: absolute; top: 0; bottom: 0; right: 0; background: var(--black); color: #FFFFFF;
-    padding: 8px 18px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; z-index: 2;
+    padding: 8px 18px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 2;
   }
-  .ticker-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
-  .ticker-track { display: inline-block; padding: 9px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }
-  .ticker-track a { margin-right: 42px; font-size: 0.9rem; color: #FFFFFF; }
+  .ticker-label .dot { width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; }
+  .ticker-track { display: inline-block; padding: 10px 0; padding-right: 150px; animation: scroll-ticker 60s linear infinite; }
+  .ticker-track a { margin-right: 42px; font-size: 0.98rem; font-weight: 600; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
   @keyframes scroll-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   .category-nav {
@@ -123,7 +123,7 @@
           <p>সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ</p>
         </div>
       </div>
-      <div class="updated">সর্বশেষ হালনাগাদ: 13 September 2026, 12:59 AM</div>
+      <div class="updated">সর্বশেষ হালনাগাদ: 13 September 2026, 01:08 AM</div>
     </div>
   </header>
 
@@ -483,19 +483,6 @@
     </div>
   </div>
 </article>
-
-<article class="card">
-  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/EN-PAK-1292026-2609121301.jpg" alt="ইংল্যান্ডের কাছে হোয়াইটওয়াশ পাকিস্তান" loading="lazy"></div>
-  <div class="card-body">
-    <span class="card-cat">খেলাধুলা</span>
-    <h3 class="card-title"><a href="https://www.risingbd.com/sports/news/662743" target="_blank" rel="noopener">ইংল্যান্ডের কাছে হোয়াইটওয়াশ পাকিস্তান</a></h3>
-    <p class="card-summary">জর্ডান কক্স ও অধিনায়ক জো রুটের দুর্দান্ত হাফ-সেঞ্চুরিতে পাকিস্তানকে তৃতীয় ও শেষ টেস্টে ৮ উইকেটে হারিয়েছে ইংল্যান্ড।</p>
-    <div class="card-meta">
-      <span class="card-source">সোর্স: RISINGBD</span>
-      <a class="card-readmore" href="https://www.risingbd.com/sports/news/662743" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
-    </div>
-  </div>
-</article>
 </div>
         </section>
         
@@ -626,6 +613,19 @@
     <div class="card-meta">
       <span class="card-source">সোর্স: RISINGBD</span>
       <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662757" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
+    </div>
+  </div>
+</article>
+
+<article class="card">
+  <div class="card-img"><img src="https://cdn.risingbd.com/media/imgAll/2026September/Spirit-movie-2609121434.jpg" alt="প্রভাসের ‘স্পিরিট’ নিয়ে সমালোচকদের চ্যালেঞ্জ প্রণয়ের" loading="lazy"></div>
+  <div class="card-body">
+    <span class="card-cat">বিনোদন</span>
+    <h3 class="card-title"><a href="https://www.risingbd.com/entertainment/news/662755" target="_blank" rel="noopener">প্রভাসের ‘স্পিরিট’ নিয়ে সমালোচকদের চ্যালেঞ্জ প্রণয়ের</a></h3>
+    <p class="card-summary">প্রভাস ও তৃপ্তি দিমরিকে নিয়ে নির্মিত ‘স্পিরিট’ মুক্তির আগেই নতুন করে আলোচনায় এসেছে। সিনেমাটি নিয়ে সমালোচকদের প্রকাশ্যে চ্যালেঞ্জ ছুড়ে দিয়েছেন প্রযোজক প্রণয় রেড্ডি ভাঙ্গা।</p>
+    <div class="card-meta">
+      <span class="card-source">সোর্স: RISINGBD</span>
+      <a class="card-readmore" href="https://www.risingbd.com/entertainment/news/662755" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
     </div>
   </div>
 </article>
@@ -900,10 +900,11 @@
         
   </main>
 
-  <footer>
+  footer { background: var(--black); color: rgba(255,255,255,0.7); padding: 26px 20px 44px; font-size: 0.85rem; border-top: 3px solid var(--red); }
+  <footer class="footer-inner">
     <div class="footer-inner">
       <p><strong>BIJOY NEWS 24</strong> একটি স্বয়ংক্রিয় মাল্টি-সোর্স নিউজ পোর্টাল — খবরের বিস্তারিত বিবরণী এআই দিয়ে জেনারেট করা।</p>
-      <p>সংবাদ সূত্রসমূহ: JAGONEWS24, RISINGBD, THEDAILYSTAR</p>
+      <p>সংবাদ সূত্রসমূহ: JAGONEWS24, RISINGBD</p>
     </div>
   </footer>
 
