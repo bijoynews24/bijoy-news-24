@@ -1,173 +1,53 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-বাংলা নিউজ পোর্টাল - অটোমেটিক সাইট জেনারেটর (মাল্টি-সোর্স ও এআই ফুল ব্রিফ সহ)
-========================================================================
-এই স্ক্রিপ্টটি বাংলাদেশের একাধিক শীর্ষস্থানীয় সংবাদমাধ্যমের RSS ফিড থেকে 
-খবর সংগ্রহ করে, জেমিনি এআই দিয়ে সেগুলোকে নিজস্ব ভাষায় বিস্তারিত ব্রিফে 
-রূপান্তর করে এবং docs/index.html নামে একটি প্রফেশনাল নিউজ পোর্টাল তৈরি করে।
-"""
-
-import html
-import json
-import os
-import re
-import sys
-import time
-import urllib.request
-import urllib.error
-from datetime import datetime, timezone, timedelta
-from xml.etree import ElementTree as ET
-
-# ---------------------------------------------------------------------------
-# ১. কনফিগারেশন — একাধিক জনপ্রিয় নিউজ সোর্স ও সাইট সেটিংস
-# ---------------------------------------------------------------------------
-
-SITE_NAME = "BIJOY NEWS 24"
-SITE_TAGLINE = "সর্বশেষ জাতীয় ও আন্তর্জাতিক খবর, স্বয়ংক্রিয়ভাবে হালনাগাদ"
-
-# বাংলাদেশের শীর্ষস্থানীয় ও জনপ্রিয় সংবাদমাধ্যমের RSS ফিড লিস্ট
-FEEDS = [
-    "https://www.prothomalo.com/arc/outboundfeed/?outputType=xml",
-    "https://www.jagonews24.com/rss/rss.xml",
-    "https://risingbd.com/rss/rss.xml",
-    "https://www.kalerkantho.com/rss.xml",
-    "https://www.jugantor.com/rss.xml",
-    "https://www.samakal.com/rss.xml",
-    "https://bangla.bdnews24.com/?_format=rss",
-    "https://www.thedailystar.net/bangla/rss.xml",
-]
-
-# ক্যাটাগরি ম্যাপিং
-CATEGORY_MAP = {
-    "national": "জাতীয়",
-    "bangladesh": "বাংলাদেশ",
-    "politics": "রাজনীতি",
-    "international": "আন্তর্জাতিক",
-    "sports": "খেলাধুলা",
-    "entertainment": "বিনোদন",
-    "economics": "অর্থনীতি",
-    "business": "ব্যবসা",
-    "lifestyle": "লাইফস্টাইল",
-    "opinion": "মতামত",
-    "technology": "প্রযুক্তি",
-    "education": "শিক্ষা",
-    "crime": "অপরাধ",
-}
-DEFAULT_CATEGORY = "সর্বশেষ"
-
-MAX_ITEMS_PER_FEED = 30
-MAX_HERO_ITEMS = 3
-MAX_PER_CATEGORY = 8
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
-
-# --- AI কনফিগারেশন (Google Gemini) ---
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-AI_MODEL = "gemini-2.5-flash"
-MAX_AI_REWRITES_PER_RUN = 30             
-AI_TIMEOUT = 20
-AI_PACE_DELAY_SEC = 4.5                  
-AI_RETRY_DELAY_SEC = 8
-
-BD_TZ = timezone(timedelta(hours=6))
-
-
-# ---------------------------------------------------------------------------
-# ২. RSS ফেচ ও পার্স করা
-# ---------------------------------------------------------------------------
-
-def fetch_feed_bytes(url: str, timeout: int = 15) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (BanglaNewsBot/1.0)"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read()
-
-
-def guess_category_from_link(link: str) -> str:
-    try:
-        path = re.sub(r"^https?://[^/]+/", "", link)
-        segment = path.split("/")[0].lower()
-        return CATEGORY_MAP.get(segment, DEFAULT_CATEGORY)
-    except Exception:
-        return DEFAULT_CATEGORY
-
-
-def strip_html(text: str) -> str:
-    text = re.sub(r"<[^>]+>", " ", text or "")
-    text = html.unescape(text)
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def find_image(item_el) -> str:
-    for tag in ("{http://search.yahoo.com/mrss/}content", "{http://search.yahoo.com/mrss/}thumbnail"):
-        el = item_el.find(tag)
-        if el is not None and el.get("url"):
-            return el.get("url")
-    enclosure = item_el.find("enclosure")
-    if enclosure is not None and enclosure.get("url"):
-        return enclosure.get("url")
-    content_encoded = item_el.find("{http://purl.org/rss/1.0/modules/content/}encoded")
-    if content_encoded is not None and content_encoded.text:
-        m = re.search(r'<img[^>]+src="([^"]+)"', content_encoded.text)
-        if m:
-            return m.group(1)
-    return ""
-
-
-def parse_rss_bytes(raw: bytes, source_name: str):
-    items = []
-    try:
-        root = ET.fromstring(raw)
-    except ET.ParseError:
-        return items
-
-    channel = root.find("channel")
-    if channel is None:
-        return items
-
-    for item_el in channel.findall("item")[:MAX_ITEMS_PER_FEED]:
-        title = strip_html(item_el.findtext("title", default=""))
-        link = (item_el.findtext("link", default="") or "").strip()
-        description = strip_html(item_el.findtext("description", default=""))
-        pub_date_raw = item_el.findtext("pubDate", default="")
-        image = find_image(item_el)
-
-        if not title or not link:
-            continue
-
-        items.append({
-            "title": title,
-            "link": link,
-            "summary": description[:350],
-            "image": image,
-            "category": guess_category_from_link(link),
-            "source": source_name,
-            "pub_date_raw": pub_date_raw,
-        })
-    return items
-
-
-def source_name_from_url(url: str) -> str:
-    m = re.search(r"https?://(?:www\.)?([^/]+)", url)
-    if m:
-        domain = m.group(1)
-        parts = domain.split(".")
-        if len(parts) >= 2:
-            return parts[-2].upper()
-        return domain.upper()
-    return url
-
-
 def collect_all_items():
     all_items = []
+    
+    # প্রতিটি সোর্স থেকে সর্বোচ্চ কয়টি নিউজ নেওয়া যাবে তার লিমিট (এখানে সর্বোচ্চ ২ দেওয়া হলো)
+    MAX_NEWS_PER_SOURCE = 2 
+    
     for feed_url in FEEDS:
         try:
-            raw = fetch_feed_bytes(feed_url)
-            src = source_name_from_url(feed_url)
-            all_items.extend(parse_rss_bytes(raw, src))
-            print(f"✔ ফিড সংগ্রহ সফল: {feed_url}")
-        except Exception as exc:
-            print(f"✘ ফিড ব্যর্থ ({feed_url}): {exc}", file=sys.stderr)
+            print(f"ফিড ফেচ করা হচ্ছে: {feed_url}")
+            parsed_feed = feedparser.parse(feed_url)
+            src_name = source_name_from_url(feed_url)
             
+            source_count = 0  # এই সোর্স থেকে কয়টি নেওয়া হলো তা ট্র্যাক করার জন্য
+            
+            for entry in parsed_feed.entries:
+                if source_count >= MAX_NEWS_PER_SOURCE:
+                    break  # এই পত্রিকার কোটা শেষ, পরবর্তী পত্রিকায় চলে যাবে
+                
+                title = entry.get("title", "শিরোনামহীন")
+                link = entry.get("link", "#")
+                
+                # সামারি বা বিবরণ সংগ্রহ
+                summary = ""
+                if hasattr(entry, "summary"):
+                    summary = entry.summary
+                elif hasattr(entry, "description"):
+                    summary = entry.description
+                
+                # ছবি খোঁজা (যদি RSS ফিডে থাকে)
+                image_url = ""
+                if hasattr(entry, "media_content") and entry.media_content:
+                    image_url = entry.media_content[0].get("url", "")
+                elif hasattr(entry, "enclosures") and entry.enclosures:
+                    image_url = entry.enclosures[0].get("href", "")
+
+                item = {
+                    "title": title,
+                    "link": link,
+                    "summary": summary[:150] + "...",
+                    "image": image_url,
+                    "source": src_name,
+                    "published": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+                all_items.append(item)
+                source_count += 1  # সোর্স কাউন্ট এক বাড়ল
+                
+        except Exception as exc:
+            print(f"✘ ফিড পড়তে সমস্যা হয়েছে ({feed_url}): {exc}", file=sys.stderr)
+
+    # ডুপ্লিকেট লিংক বাদ দেওয়া
     seen = set()
     unique_items = []
     for it in all_items:
@@ -175,372 +55,5 @@ def collect_all_items():
             continue
         seen.add(it["link"])
         unique_items.append(it)
+        
     return unique_items
-
-
-# ---------------------------------------------------------------------------
-# ৩. AI দিয়ে বিস্তারিত নিউজ ব্রিফ তৈরি করা
-# ---------------------------------------------------------------------------
-
-def ai_rewrite_brief(title: str, summary: str) -> str:
-    if not GEMINI_API_KEY:
-        return summary
-
-    prompt = (
-        "তুমি একজন প্রফেশনাল বাংলা নিউজ এডিটর। নিচের হেডলাইন ও মূল তথ্যের "
-        "ভিত্তিতে ৫-৬ লাইনের একটি আকর্ষণীয়, বিস্তারিত ও তথ্যবহুল নিউজ ব্রিফ বা প্রতিবেদন তৈরি করো। "
-        "ভাষা একদম সাবলীল ও স্বাভাবিক বাংলা হবে। হুবহু কপি না করে নিজের মতো করে সুন্দরভাবে গুছিয়ে লিখবে। "
-        "শুধুমাত্র নিউজের টেক্সট টুকু রিটার্ন করবে, অন্য কোনো অতিরিক্ত কথা বলবে না।\n\n"
-        f"হেডলাইন: {title}\n"
-        f"মূল তথ্য: {summary}"
-    )
-
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{AI_MODEL}:generateContent"
-    body = json.dumps({
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"maxOutputTokens": 400, "temperature": 0.5},
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        url,
-        data=body,
-        method="POST",
-        headers={
-            "Content-Type": "application/json",
-            "x-goog-api-key": GEMINI_API_KEY,
-        },
-    )
-
-    for attempt in range(2):
-        try:
-            with urllib.request.urlopen(req, timeout=AI_TIMEOUT) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                candidates = data.get("candidates", [])
-                if not candidates:
-                    return summary
-                parts = candidates[0].get("content", {}).get("parts", [])
-                text = "".join(p.get("text", "") for p in parts).strip()
-                return text or summary
-        except urllib.error.HTTPError as exc:
-            if exc.code == 429 and attempt == 0:
-                time.sleep(AI_RETRY_DELAY_SEC)
-                continue
-            return summary
-        except Exception:
-            return summary
-    return summary
-
-
-def apply_ai_rewrites(items):
-    if not GEMINI_API_KEY:
-        print("ℹ️  GEMINI_API_KEY সেট করা নেই — ডিফল্ট সারাংশ ব্যবহার হচ্ছে।")
-        return items
-    count = 0
-    for it in items:
-        if count >= MAX_AI_REWRITES_PER_RUN:
-            break
-        it["summary"] = ai_rewrite_brief(it["title"], it["summary"])
-        count += 1
-        time.sleep(AI_PACE_DELAY_SEC)
-    print(f"✅ AI দিয়ে সফলভাবে {count}টি খবরের বিস্তারিত ব্রিফ জেনারেট করা হয়েছে।")
-    return items
-
-
-# ---------------------------------------------------------------------------
-# ৪. HTML টেমপ্লেট ও ডিজাইন জেনারেশন
-# ---------------------------------------------------------------------------
-
-CARD_TEMPLATE = """
-<article class="card">
-  {image_html}
-  <div class="card-body">
-    <span class="card-cat">{category}</span>
-    <h3 class="card-title"><a href="{link}" target="_blank" rel="noopener">{title}</a></h3>
-    <p class="card-summary">{summary}</p>
-    <div class="card-meta">
-      <span class="card-source">সোর্স: {source}</span>
-      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
-    </div>
-  </div>
-</article>
-"""
-
-HERO_TEMPLATE = """
-<article class="hero-card {extra_class}">
-  {image_html}
-  <div class="hero-body">
-    <span class="card-cat">{category}</span>
-    <h2 class="hero-title"><a href="{link}" target="_blank" rel="noopener">{title}</a></h2>
-    <p class="hero-summary">{summary}</p>
-    <div class="card-meta">
-      <span class="card-source">সোর্স: {source}</span>
-      <a class="card-readmore" href="{link}" target="_blank" rel="noopener">বিস্তারিত পড়ুন →</a>
-    </div>
-  </div>
-</article>
-"""
-
-
-def render_image(image_url: str, alt: str) -> str:
-    if not image_url:
-        return '<div class="card-img placeholder" aria-hidden="true"></div>'
-    safe_alt = html.escape(alt)
-    return f'<div class="card-img"><img src="{html.escape(image_url)}" alt="{safe_alt}" loading="lazy"></div>'
-
-
-def render_card(item, template=CARD_TEMPLATE, extra_class=""):
-    return template.format(
-        image_html=render_image(item["image"], item["title"]),
-        category=html.escape(item["category"]),
-        link=html.escape(item["link"]),
-        title=html.escape(item["title"]),
-        summary=html.escape(item["summary"]),
-        source=html.escape(item["source"]),
-        extra_class=extra_class,
-    )
-
-
-def build_html(items):
-    if not items:
-        raise SystemExit("কোনো খবর পাওয়া যায়নি।")
-
-    now_bd = datetime.now(BD_TZ)
-    updated_str = now_bd.strftime("%d %B %Y, %I:%M %p")
-
-    hero_items = items[:MAX_HERO_ITEMS]
-    rest_items = items[MAX_HERO_ITEMS:]
-
-    by_category = {}
-    for it in rest_items:
-        by_category.setdefault(it["category"], []).append(it)
-
-    ticker_items = items[:12]
-    ticker_html = "".join(
-        f'<a href="{html.escape(it["link"])}" target="_blank" rel="noopener">{html.escape(it["title"])}</a>'
-        for it in ticker_items
-    )
-
-    hero_html = ""
-    if hero_items:
-        lead = hero_items[0]
-        hero_html += render_card(lead, HERO_TEMPLATE, extra_class="hero-lead")
-        for it in hero_items[1:]:
-            hero_html += render_card(it, HERO_TEMPLATE, extra_class="hero-secondary")
-
-    nav_links = "".join(
-        f'<a href="#cat-{i}">{html.escape(cat)}</a>'
-        for i, cat in enumerate(by_category.keys())
-    )
-
-    sections_html = ""
-    for i, (cat, cat_items) in enumerate(by_category.items()):
-        cards = "".join(render_card(it) for it in cat_items[:MAX_PER_CATEGORY])
-        sections_html += f"""
-        <section class="category-section" id="cat-{i}">
-          <div class="section-heading">
-            <h2>{html.escape(cat)}</h2>
-            <span class="section-rule"></span>
-          </div>
-          <div class="card-grid">{cards}</div>
-        </section>
-        """
-
-    sources_credit = ", ".join(sorted(set(it["source"] for it in items)))
-
-    return PAGE_TEMPLATE.format(
-        site_name=html.escape(SITE_NAME),
-        tagline=html.escape(SITE_TAGLINE),
-        updated=html.escape(updated_str),
-        ticker_html=ticker_html,
-        nav_links=nav_links,
-        hero_html=hero_html,
-        sections_html=sections_html,
-        sources_credit=html.escape(sources_credit),
-    )
-
-
-PAGE_TEMPLATE = """<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{site_name} — {tagline}</title>
-<meta name="description" content="{tagline}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700;900&family=Hind+Siliguri:wght@400;500;600;700&family=Anton&display=swap" rel="stylesheet">
-<style>
-  :root {{
-    --paper: #FFFFFF;
-    --ink: #111014;
-    --ink-soft: #5C5860;
-    --black: #0C0B0E;
-    --red: #E4102B;
-    --red-deep: #B80C22;
-    --hairline: #E8E6E9;
-    --glow: rgba(228, 16, 43, 0.25);
-  }}
-  * {{ box-sizing: border-box; }}
-  html {{ scroll-behavior: smooth; }}
-  body {{
-    margin: 0; background: var(--paper); color: var(--ink);
-    font-family: 'Hind Siliguri', sans-serif; line-height: 1.6;
-  }}
-  a {{ color: inherit; text-decoration: none; }}
-  h1, h2, h3 {{ font-family: 'Noto Serif Bengali', serif; margin: 0; }}
-
-  .masthead {{ background: var(--black); border-bottom: 3px solid var(--red); }}
-  .masthead-inner {{
-    max-width: 1160px; margin: 0 auto; padding: 26px 20px 22px;
-    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;
-  }}
-  .brand {{ display: flex; align-items: center; gap: 14px; }}
-  .brand .accent-bar {{ width: 6px; align-self: stretch; background: var(--red); border-radius: 2px; }}
-  .masthead .brand h1 {{
-    font-family: 'Anton', sans-serif; font-size: clamp(2.2rem, 6vw, 3.5rem);
-    color: #FFFFFF; letter-spacing: 1.5px; line-height: 1;
-  }}
-  .masthead .brand p {{ margin: 6px 0 0; color: rgba(255,255,255,0.6); font-size: 0.92rem; font-weight: 600; }}
-  .masthead .updated {{ font-size: 0.85rem; color: rgba(255,255,255,0.55); text-align: right; }}
-
-  .ticker-bar {{ background: var(--red); color: #fff; overflow: hidden; white-space: nowrap; position: relative; height: 42px; display: flex; align-items: center; }}
-  .ticker-bar .ticker-label {{
-    position: absolute; top: 0; bottom: 0; right: 0; background: var(--black); color: #FFFFFF;
-    padding: 0 18px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; z-index: 2;
-    box-shadow: -5px 0 10px rgba(0,0,0,0.3);
-  }}
-  .ticker-label .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; }}
-  .ticker-track {{
-    display: inline-block;
-    white-space: nowrap;
-    will-change: transform;
-    animation: scroll-ticker 35s linear infinite;
-    -webkit-font-smoothing: antialiased;
-  }}
-  .ticker-track a {{
-    margin-right: 50px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #FFFFFF;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.6), -1px -1px 2px rgba(0,0,0,0.3);
-    display: inline-block;
-  }}
-  @keyframes scroll-ticker {{
-    0% {{ transform: translate3d(0, 0, 0); }}
-    100% {{ transform: translate3d(-50%, 0, 0); }}
-  }}
-
-  .category-nav {{
-    max-width: 1160px; margin: 0 auto; padding: 12px 20px; display: flex; gap: 24px;
-    overflow-x: auto; border-bottom: 1px solid var(--hairline); font-size: 0.92rem; font-weight: 700;
-  }}
-  .category-nav a {{ white-space: nowrap; color: var(--ink); }}
-  .category-nav a:hover {{ color: var(--red); }}
-
-  main {{ max-width: 1160px; margin: 0 auto; padding: 30px 20px 60px; }}
-
-  .hero-grid {{ display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-bottom: 50px; }}
-  .hero-lead {{ grid-row: span 2; }}
-  @media (max-width: 800px) {{ .hero-grid {{ grid-template-columns: 1fr; }} .hero-lead {{ grid-row: auto; }} }}
-
-  .hero-card, .card {{
-    background: var(--card-bg, #FFF); border: 1px solid var(--hairline); border-top: 3px solid transparent;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease; display: flex; flex-direction: column;
-  }}
-  .hero-card:hover, .card:hover {{
-    transform: translateY(-5px); box-shadow: 0 18px 36px -18px var(--glow); border-top-color: var(--red);
-  }}
-  .card-img img {{ width: 100%; height: 100%; object-fit: cover; display: block; }}
-  .hero-lead .card-img {{ aspect-ratio: 16/10; overflow: hidden; }}
-  .hero-secondary {{ display: flex; flex-direction: row; }}
-  .hero-secondary .card-img {{ width: 40%; flex-shrink: 0; aspect-ratio: 1/1; overflow: hidden; }}
-  .hero-secondary .hero-body {{ flex: 1; }}
-  .card-img.placeholder {{ background: linear-gradient(135deg, var(--red), var(--black)); aspect-ratio: 16/10; }}
-
-  .card-cat {{
-    display: inline-block; background: var(--red); color: #FFFFFF; font-size: 0.72rem;
-    font-weight: 700; padding: 3px 10px; border-radius: 2px; margin-bottom: 8px;
-  }}
-  .hero-body, .card-body {{ padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }}
-  .hero-lead .hero-title {{ font-size: clamp(1.4rem, 2.5vw, 2rem); line-height: 1.32; }}
-  .hero-secondary .hero-title {{ font-size: 1rem; }}
-  .hero-title a:hover, .card-title a:hover {{ color: var(--red); }}
-  .hero-summary, .card-summary {{ color: var(--ink-soft); margin: 10px 0 15px; font-size: 0.9rem; flex: 1; }}
-  .hero-secondary .hero-summary {{ display: none; }}
-
-  .card-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }}
-  .card-title {{ font-size: 1.05rem; line-height: 1.4; margin-top: 2px; }}
-  .card-img {{ aspect-ratio: 16/10; overflow: hidden; }}
-
-  .card-meta {{
-    margin-top: auto; display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.78rem; color: var(--ink-soft); border-top: 1px solid var(--hairline); padding-top: 10px;
-  }}
-  .card-readmore {{ color: var(--red); font-weight: 700; }}
-
-  .section-heading {{ display: flex; align-items: center; gap: 14px; margin: 50px 0 22px; }}
-  .section-heading h2 {{ font-size: 1.55rem; color: var(--ink); white-space: nowrap; position: relative; padding-left: 16px; }}
-  .section-heading h2::before {{
-    content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 5px; background: var(--red);
-  }}
-  .section-rule {{ flex: 1; height: 1px; background: var(--hairline); }}
-
-  footer {{ background: var(--black); color: rgba(255,255,255,0.7); padding: 26px 20px 44px; font-size: 0.85rem; border-top: 3px solid var(--red); }}
-  footer .footer-inner {{ max-width: 1160px; margin: 0 auto; }}
-  footer strong {{ color: #FFFFFF; }}
-</style>
-</head>
-<body>
-
-  <header class="masthead">
-    <div class="masthead-inner">
-      <div class="brand">
-        <span class="accent-bar" aria-hidden="true"></span>
-        <div>
-          <h1>{site_name}</h1>
-          <p>{tagline}</p>
-        </div>
-      </div>
-      <div class="updated">সর্বশেষ হালনাগাদ: {updated}</div>
-    </div>
-  </header>
-
-  <div class="ticker-bar">
-    <div class="ticker-track">{ticker_html}{ticker_html}</div>
-    <span class="ticker-label"><span class="dot"></span> ব্রেকিং</span>
-  </div>
-
-  <nav class="category-nav">{nav_links}</nav>
-
-  <main>
-    <div class="hero-grid">{hero_html}</div>
-    {sections_html}
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-      <p><strong>{site_name}</strong> একটি স্বয়ংক্রিয় মাল্টি-সোর্স নিউজ পোর্টাল — খবরের বিস্তারিত বিবরণী এআই দিয়ে জেনারেট করা।</p>
-      <p>সংবাদ সূত্রসমূহ: {sources_credit}</p>
-    </div>
-  </footer>
-
-</body>
-</html>
-"""
-
-
-def main():
-    print("🔄 একাধিক নিউজ সোর্স থেকে খবর সংগ্রহ করা হচ্ছে...")
-    items = collect_all_items()
-    print(f"🤖 মোট {len(items)}টি অনন্য খবর পাওয়া গেছে। এআই প্রসেসিং শুরু হচ্ছে...")
-    items = apply_ai_rewrites(items)
-    page = build_html(items)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    out_path = os.path.join(OUTPUT_DIR, "index.html")
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(page)
-    print(f"✅ সফল! সাইট তৈরি সম্পন্ন: {out_path} ({len(items)}টি নিউজ সহ)")
-
-
-if __name__ == "__main`":
-    main()
