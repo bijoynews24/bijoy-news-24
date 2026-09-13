@@ -2,14 +2,11 @@ name: Update Bangla News Site
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/30 * * * *' # প্রতি ৩০ মিনিট পর পর রান হবে
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  update-news:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,18 +19,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install feedparser requests
+          pip install requests feedparser
 
-      - name: Generate news site
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          python scripts/generate_site.py
+      - name: Run News Generator
+        run: python scripts/generate_site.py
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.io"
-          git add docs/index.html
-          git commit -m "Auto-update news site via GitHub Actions" || echo "No changes to commit"
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add docs/
+          git commit -m "Auto-update latest news [skip ci]" || exit 0
           git push
